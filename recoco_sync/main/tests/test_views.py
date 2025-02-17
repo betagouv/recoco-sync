@@ -12,6 +12,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
 
+from .factories import WebhookConfigFactory
+
 default_payload = {
     "topic": "projects.Project/update",
     "object": {
@@ -48,8 +50,10 @@ def _webhook_headers(payload: dict[str, Any], headers: dict[str, str] = None, se
 
 @pytest.mark.django_db
 def test_webhook_ok(client):
+    webhook_config = WebhookConfigFactory()
+
     resp = client.post(
-        reverse("api:webhook"),
+        reverse("api:webhook", kwargs={"code": webhook_config.code}),
         headers=_webhook_headers(default_payload, default_headers),
         data=default_payload,
         content_type="application/json",
@@ -57,9 +61,12 @@ def test_webhook_ok(client):
     assert resp.status_code == 200, resp.content
 
 
+@pytest.mark.django_db
 def test_invalid_signature(client):
+    webhook_config = WebhookConfigFactory()
+
     resp = client.post(
-        reverse("api:webhook"),
+        reverse("api:webhook", kwargs={"code": webhook_config.code}),
         headers=_webhook_headers(default_payload, default_headers, secret="wrong-secret"),
         data=default_payload,
         content_type="application/json",

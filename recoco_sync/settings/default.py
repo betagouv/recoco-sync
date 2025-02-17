@@ -43,17 +43,24 @@ USE_TZ = True
 #
 # Application definition
 #
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django_extensions",
-    "django_celery_results",
-    "main",
-]
+INSTALLED_APPS = (
+    [
+        "django.contrib.admin",
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.messages",
+        "django.contrib.staticfiles",
+    ]
+    + [
+        "django_celery_results",
+        "django_extensions",
+    ]
+    + [
+        "main",
+        "grist_connector",
+    ]
+)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -142,7 +149,6 @@ WEBHOOK_SECRET = env.str("WEBHOOK_SECRET")
 #
 # Recoco API congiguration
 #
-RECOCO_API_URL = env.str("RECOCO_API_URL")
 RECOCO_API_USERNAME = env.str("RECOCO_API_USERNAME")
 RECOCO_API_PASSWORD = env.str("RECOCO_API_PASSWORD")
 

@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 from django.core.management.base import BaseCommand, CommandParser
-from main.clients.grist import grist_table_exists, table_columns_are_consistent
-from main.models import GristConfig
-from main.tasks import populate_grist_table, refresh_grist_table
+from grist_connector.models import GristConfig
+from grist_connector.tasks import populate_grist_table, refresh_grist_table
+
+from recoco_sync.grist_connector.connectors import (
+    grist_table_exists,
+    table_columns_are_consistent,
+)
 
 
 class Command(BaseCommand):
@@ -35,7 +39,7 @@ class Command(BaseCommand):
             return
 
         self.stdout.write(f"Processing Grist config {config.id}")
-        self.stdout.write(f" >> URL: {config.api_base_url}")
+        self.stdout.write(f" >> URL: {config.api_url}")
         self.stdout.write(f" >> doc ID: {config.doc_id}")
         self.stdout.write(f" >> table ID: {config.table_id}")
 

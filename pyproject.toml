@@ -18,6 +18,8 @@ dependencies = [
     "redis>=5.1.0",
     "sentry-sdk[celery,django]>=2.15.0",
     "whitenoise>=6.7.0",
+    "django-browser-reload>=1.18.0",
+    "django-debug-toolbar>=5.0.1",
 ]
 
 [tool.uv]
@@ -71,6 +73,7 @@ ignore = [
 "__init__.py" = ["F401", "F403"]
 "sandbox/*" = ["T201", "T203"]
 "**/settings/testing.py" = ["E402", "F403"]
+"**/settings/dev.py" = ["E402", "F403", "F405"]
 "**/migrations/*.py" = ["E501"]
 
 [tool.ruff.lint.mccabe]

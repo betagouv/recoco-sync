@@ -5,7 +5,8 @@ import logging
 from typing import Any, Self
 
 from httpx import Client, Response
-from main.models import GristConfig
+
+from .models import GristConfig
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +36,7 @@ class GristApiClient:
     def from_config(cls, config: GristConfig) -> Self:
         return cls(
             api_key=config.api_key,
-            api_base_url=config.api_base_url,
+            api_base_url=config.api_url,
             doc_id=config.doc_id,
         )
 

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-from main.services import update_or_create_columns
 
 
 @pytest.fixture
@@ -208,9 +207,3 @@ def survey_answer_payload_object():
             "is_active": True,
         },
     }
-
-
-@pytest.fixture
-def default_columns():
-    update_or_create_columns()
-    yield

@@ -4,9 +4,8 @@ import uuid
 
 import factory
 import factory.fuzzy
-from main.choices import GristColumnType, ObjectType
-from main.models import GristColumn, GristColumnFilter, GristConfig, WebhookEvent
-from main.services import update_or_create_columns_config
+from main.choices import ObjectType
+from main.models import WebhookConfig, WebhookEvent
 
 
 class BaseFactory(factory.django.DjangoModelFactory):
@@ -14,6 +13,13 @@ class BaseFactory(factory.django.DjangoModelFactory):
         abstract = True
 
     id = factory.LazyFunction(uuid.uuid4)
+
+
+class WebhookConfigFactory(BaseFactory):
+    class Meta:
+        model = WebhookConfig
+
+    api_url = factory.Faker("url")
 
 
 class WebhookEventFactory(BaseFactory):
@@ -29,36 +35,4 @@ class WebhookEventFactory(BaseFactory):
     headers = {}
     payload = {}
 
-
-class GristConfigFactory(BaseFactory):
-    class Meta:
-        model = GristConfig
-
-    name = factory.Faker("word")
-    doc_id = factory.fuzzy.FuzzyText(length=10)
-    table_id = factory.fuzzy.FuzzyText(length=10)
-
-    @factory.post_generation
-    def create_columns_config(obj, create, extracted, **kwargs):  # noqa: N805
-        if not create:
-            return
-        if extracted:
-            update_or_create_columns_config(config=obj)
-
-
-class GristColumnFactory(BaseFactory):
-    class Meta:
-        model = GristColumn
-
-    col_id = factory.Faker("word")
-    label = factory.Faker("word")
-    type = factory.fuzzy.FuzzyChoice(choices=GristColumnType.choices)
-
-
-class GristColumnFilterFactory(BaseFactory):
-    class Meta:
-        model = GristColumnFilter
-
-    grist_config = factory.SubFactory(GristConfigFactory)
-    grist_column = factory.SubFactory(GristColumnFactory)
-    filter_value = factory.Faker("word")
+    webhook_config = factory.SubFactory(WebhookConfigFactory)

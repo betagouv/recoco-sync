@@ -10,6 +10,11 @@ class RecocoApiAuth(Auth):
     requires_response_body = True
     access_token: str = None
     refresh_token: str = None
+    base_url: str
+
+    def __init__(self, base_url: str, *args, **kwargs):
+        self.base_url = base_url
+        super().__init__(*args, **kwargs)
 
     def auth_flow(self, request: Request):
         if self.access_token is None:
@@ -30,7 +35,7 @@ class RecocoApiAuth(Auth):
     def _build_token_request(self):
         return Request(
             "POST",
-            f"{settings.RECOCO_API_URL}/token/",
+            f"{self.base_url}/token/",
             data={
                 "username": settings.RECOCO_API_USERNAME,
                 "password": settings.RECOCO_API_PASSWORD,
@@ -40,7 +45,7 @@ class RecocoApiAuth(Auth):
     def _build_refresh_request(self):
         return Request(
             "POST",
-            f"{settings.RECOCO_API_URL}/token/refresh/",
+            f"{self.base_url}/token/refresh/",
             data={
                 "refresh": self.refresh_token,
             },
@@ -60,10 +65,10 @@ def raise_on_4xx_5xx(response: Response):
 class RecocoApiClient:
     _client: Client
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, api_url: str, *args, **kwargs):
         self._client = Client(
-            auth=RecocoApiAuth(),
-            base_url=settings.RECOCO_API_URL,
+            auth=RecocoApiAuth(base_url=api_url),
+            base_url=api_url,
             event_hooks={"response": [raise_on_4xx_5xx]},
             **kwargs,
         )
@@ -82,4 +87,8 @@ class RecocoApiClient:
 
     def get_survey_session_answers(self, session_id: int) -> dict[str, Any]:
         response = self._client.get(f"/survey/sessions/{session_id}/answers/")
+        return response.json()
+
+    def get_questions(self) -> dict[str, Any]:
+        response = self._client.get("/survey/questions/?limit=500")
         return response.json()
