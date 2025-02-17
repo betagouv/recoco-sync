@@ -169,3 +169,13 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# docker compose
+persist/
+.docker
+
+# static files
+static/*
+
+# dev scripts
+*_local.py
