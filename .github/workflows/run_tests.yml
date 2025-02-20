@@ -1,0 +1,51 @@
+on:
+  workflow_call:
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  SECRET_KEY: secret-key
+  DEBUG: False
+  DJANGO_SETTINGS_MODULE: recoco_sync.settings.testing
+
+jobs:
+  test:
+    name: Test
+
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5435:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_NAME: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_PORT: 5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Install the project
+        run: uv sync --dev
+
+      - name: Check migrations
+        run: uv run manage.py makemigrations --check --dry-run
+
+      - name: Run tests
+        run: uv run pytest --create-db

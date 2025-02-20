@@ -207,3 +207,65 @@ def survey_answer_payload_object():
             "is_active": True,
         },
     }
+
+
+@pytest.fixture
+def questions_payload_object():
+    return {
+        "count": 18,
+        "next": None,
+        "previous": None,
+        "results": [
+            {
+                "id": 85,
+                "text": "Thématique(s)",
+                "text_short": "Thématique(s)",
+                "slug": "thematiques-2",
+                "is_multiple": True,
+                "choices": [
+                    {"id": 258, "value": "13", "text": "Commerce rural"},
+                    {
+                        "id": 247,
+                        "value": "2",
+                        "text": "Citoyenneté / Participation de la population à la vie locale",
+                    },
+                    {"id": 249, "value": "4", "text": "Logement / Habitat"},
+                    {"id": 254, "value": "9", "text": "Patrimoine"},
+                    {"id": 303, "value": "15", "text": "Tourisme"},
+                    {
+                        "id": 255,
+                        "value": "10",
+                        "text": "Transition écologique et biodiversité",
+                    },
+                    {"id": 250, "value": "5", "text": "Transition énergétique"},
+                    {
+                        "id": 251,
+                        "value": "6",
+                        "text": "Transition digitale / Numérique",
+                    },
+                    {"id": 306, "value": "17", "text": "Autre"},
+                ],
+            },
+            {
+                "id": 91,
+                "text": "Budget prévisionnel",
+                "text_short": "Budget prévisionnel",
+                "slug": "budget-previsionnel",
+                "is_multiple": False,
+                "choices": [],
+            },
+            {
+                "id": 120,
+                "text": "Niveau de maturité du projet",
+                "text_short": "Maturité du projet",
+                "slug": "maturite-du-projet",
+                "is_multiple": True,
+                "choices": [
+                    {"id": 299, "value": "Amorçage", "text": "Amorçage"},
+                    {"id": 300, "value": "Diagnostic", "text": "Diagnostic"},
+                    {"id": 302, "value": "Terminé", "text": "Terminé"},
+                    {"id": 301, "value": "En cours", "text": "En cours"},
+                ],
+            },
+        ],
+    }
