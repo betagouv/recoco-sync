@@ -68,9 +68,15 @@ class GristConfigAdmin(admin.ModelAdmin):
         "reset_columns",
     )
 
-    list_select_related = ("webhook_config",)
-
     inlines = (GristConfigColumnInline,)
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("webhook_config")
+            .prefetch_related("columns")
+        )
 
     @admin.action(
         description="Créer ou mettre à jour la table Grist des configurations sélectionnées"
