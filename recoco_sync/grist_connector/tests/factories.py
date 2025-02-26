@@ -4,6 +4,7 @@ import uuid
 
 import factory
 import factory.fuzzy
+from django.conf import settings
 from grist_connector.choices import GristColumnType
 from grist_connector.connectors import GristConnector
 from grist_connector.models import GristColumn, GristConfig
@@ -30,6 +31,7 @@ class GristConfigFactory(BaseFactory):
     class Meta:
         model = GristConfig
 
+    api_url = settings.GRIST_API_URL_EXAMPLE
     name = factory.Faker("word")
     doc_id = factory.fuzzy.FuzzyText(length=10)
     table_id = factory.fuzzy.FuzzyText(length=10)

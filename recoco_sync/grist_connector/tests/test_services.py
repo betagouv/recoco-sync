@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 from grist_connector.connectors import check_table_columns_consistency, grist_table_exists
 
 from .factories import GristColumnFactory, GristConfigFactory
-from .fixtures import table_columns
 
 
 def test_grist_table_exists():
@@ -19,12 +18,8 @@ def test_grist_table_exists():
 
 
 @pytest.mark.django_db
-@patch(
-    "grist_connector.connectors.GristApiClient.get_table_columns",
-    Mock(return_value=table_columns),
-)
 def test_check_table_columns_consistency():
-    config = GristConfigFactory(create_columns=True)
+    config = GristConfigFactory(create_columns=True, doc_id="123456789", table_id="my_table")
     assert check_table_columns_consistency(config) is True
 
     GristColumnFactory(grist_config=config)
