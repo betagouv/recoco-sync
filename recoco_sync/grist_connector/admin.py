@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from django import forms
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
 from httpx import HTTPStatusError
 
-from .choices import GristColumnType
 from .connectors import (
     GristConnector,
     check_table_columns_consistency,
@@ -44,23 +42,6 @@ class GristColumnAdmin(admin.ModelAdmin):
             .select_related("grist_config")
             .order_by("grist_config__name", "created")
         )
-
-
-class GristFilterInlineForm(forms.ModelForm):
-    grist_column = forms.ModelChoiceField(
-        queryset=GristColumn.objects.filter(
-            type__in=(
-                GristColumnType.BOOL,
-                GristColumnType.TEXT,
-                GristColumnType.NUMERIC,
-                GristColumnType.INTEGER,
-                GristColumnType.CHOICE,
-                GristColumnType.CHOICE_LIST,
-            )
-        )
-        .exclude(label__startswith="PJ")
-        .order_by("label"),
-    )
 
 
 class GristConfigColumnInline(admin.TabularInline):
