@@ -28,4 +28,5 @@ def test_check_table_columns_consistency():
     assert check_table_columns_consistency(config) is True
 
     GristColumnFactory(grist_config=config)
+    config.refresh_from_db()
     assert check_table_columns_consistency(config) is False

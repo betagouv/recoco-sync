@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import httpx
 import pytest
+from django.conf import settings
 
 
 @pytest.fixture
@@ -145,38 +147,22 @@ def survey_answer_payload_object():
             "id": 85,
             "text": "Thématique(s)",
             "text_short": "Thématique(s)",
-            "slug": "thematiques-2",
+            "slug": "thematiques",
             "is_multiple": True,
             "choices": [
-                {"id": 258, "value": "13", "text": "Commerce rural"},
+                {
+                    "id": 258,
+                    "value": "13",
+                    "text": "Commerce rural",
+                },
                 {
                     "id": 247,
                     "value": "2",
-                    "text": "Citoyenneté / Participation de la population à la vie locale",
+                    "text": "Participation à la vie locale",
                 },
                 {"id": 249, "value": "4", "text": "Logement / Habitat"},
                 {"id": 254, "value": "9", "text": "Patrimoine"},
                 {"id": 303, "value": "15", "text": "Tourisme"},
-                {
-                    "id": 255,
-                    "value": "10",
-                    "text": "Transition écologique et biodiversité",
-                },
-                {
-                    "id": 250,
-                    "value": "5",
-                    "text": "Transition énergétique",
-                },
-                {
-                    "id": 251,
-                    "value": "6",
-                    "text": "Transition digitale / Numérique",
-                },
-                {
-                    "id": 304,
-                    "value": "16",
-                    "text": "Services à la population (hors commerce)",
-                },
                 {"id": 306, "value": "17", "text": "Autre"},
             ],
         },
@@ -187,14 +173,13 @@ def survey_answer_payload_object():
             {
                 "id": 247,
                 "value": "2",
-                "text": "Citoyenneté / Participation de la population à la vie locale",
+                "text": "Participation à la vie locale",
             },
             {
-                "id": 255,
-                "value": "10",
-                "text": "Transition écologique et biodiversité",
+                "id": 254,
+                "value": "9",
+                "text": "Patrimoine",
             },
-            {"id": 250, "value": "5", "text": "Transition énergétique"},
         ],
         "comment": "Mon commentaire sur les thématiques",
         "attachment": None,
@@ -220,29 +205,18 @@ def questions_payload_object():
                 "id": 85,
                 "text": "Thématique(s)",
                 "text_short": "Thématique(s)",
-                "slug": "thematiques-2",
+                "slug": "thematiques",
                 "is_multiple": True,
                 "choices": [
                     {"id": 258, "value": "13", "text": "Commerce rural"},
                     {
                         "id": 247,
                         "value": "2",
-                        "text": "Citoyenneté / Participation de la population à la vie locale",
+                        "text": "Participation à la vie locale",
                     },
                     {"id": 249, "value": "4", "text": "Logement / Habitat"},
                     {"id": 254, "value": "9", "text": "Patrimoine"},
                     {"id": 303, "value": "15", "text": "Tourisme"},
-                    {
-                        "id": 255,
-                        "value": "10",
-                        "text": "Transition écologique et biodiversité",
-                    },
-                    {"id": 250, "value": "5", "text": "Transition énergétique"},
-                    {
-                        "id": 251,
-                        "value": "6",
-                        "text": "Transition digitale / Numérique",
-                    },
                     {"id": 306, "value": "17", "text": "Autre"},
                 ],
             },
@@ -269,3 +243,13 @@ def questions_payload_object():
             },
         ],
     }
+
+
+@pytest.fixture(autouse=True)
+def mock_recoco_client_httpx_responses(respx_mock, questions_payload_object):
+    respx_mock.post(f"{settings.API_URL_EXAMPLE}/token/").mock(
+        return_value=httpx.Response(200, json={"access": "token"})
+    )
+    respx_mock.get(f"{settings.API_URL_EXAMPLE}/survey/questions/?limit=500").mock(
+        return_value=httpx.Response(200, json=questions_payload_object)
+    )

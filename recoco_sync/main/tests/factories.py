@@ -4,6 +4,7 @@ import uuid
 
 import factory
 import factory.fuzzy
+from django.conf import settings
 from main.choices import ObjectType
 from main.models import WebhookConfig, WebhookEvent
 
@@ -19,7 +20,7 @@ class WebhookConfigFactory(BaseFactory):
     class Meta:
         model = WebhookConfig
 
-    api_url = factory.Faker("url")
+    api_url = settings.API_URL_EXAMPLE
 
 
 class WebhookEventFactory(BaseFactory):

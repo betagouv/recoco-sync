@@ -15,3 +15,5 @@ for k, v in {
 
 
 from .default import *
+
+API_URL_EXAMPLE = "https://api.example.com/api"
