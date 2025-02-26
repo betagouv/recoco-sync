@@ -29,6 +29,7 @@ dev-dependencies = [
     "pytest>=8.3.3",
     "pytest-django>=4.9.0",
     "pytest-xdist>=3.6.1",
+    "respx>=0.22.0",
     "ruff>=0.6.8",
     "unittest-parametrize>=1.4.0",
 ]

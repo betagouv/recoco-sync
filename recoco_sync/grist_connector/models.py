@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any
 
 from django.db import models
-from django.utils.functional import cached_property
 from main.models import WebhookConfig
 
 from recoco_sync.utils.models import BaseModel
@@ -37,7 +36,7 @@ class GristConfig(BaseModel):
             models.Index(fields=["enabled"]),
         ]
 
-    @cached_property
+    @property
     def table_columns(self) -> list[dict[str, Any]]:
         return [
             {
@@ -50,7 +49,7 @@ class GristConfig(BaseModel):
             for column in self.columns.order_by("created")
         ]
 
-    @cached_property
+    @property
     def table_headers(self) -> list[str]:
         return list(self.columns.order_by("created").values_list("col_id", flat=True))
 
@@ -77,7 +76,7 @@ class GristColumn(BaseModel):
 
     class Meta:
         db_table = "gristcolumn"
-        ordering = ("col_id",)  # TODO: change default order ro "created"
+        ordering = ("col_id",)  # TODO: change default order to "created"
         verbose_name = "Grist column"
         verbose_name_plural = "Grist columns"
         unique_together = [
