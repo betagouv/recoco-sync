@@ -20,7 +20,7 @@ def get_question_type(question: dict[str, Any]) -> QuestionType:
     joined_choices = "/".join(sorted(choices_values)).lower().replace(" ", "")
     if joined_choices == "non/oui":
         return QuestionType.YES_NO
-    if joined_choices == "non/oui/jenesaispas":
+    if joined_choices == "jenesaispas/non/oui":
         return QuestionType.YES_NO_MAYBE
 
     return QuestionType.REGULAR
