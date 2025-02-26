@@ -76,7 +76,7 @@ MIDDLEWARE = [
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["recoco_sync/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
