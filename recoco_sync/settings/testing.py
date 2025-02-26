@@ -16,4 +16,5 @@ for k, v in {
 
 from .default import *
 
-API_URL_EXAMPLE = "https://api.example.com/api"
+RECOCO_API_URL_EXAMPLE = "https://recoco.example.com/api"
+GRIST_API_URL_EXAMPLE = "https://grist.example.com/api"

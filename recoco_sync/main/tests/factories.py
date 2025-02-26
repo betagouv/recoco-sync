@@ -20,7 +20,7 @@ class WebhookConfigFactory(BaseFactory):
     class Meta:
         model = WebhookConfig
 
-    api_url = settings.API_URL_EXAMPLE
+    api_url = settings.RECOCO_API_URL_EXAMPLE
 
 
 class WebhookEventFactory(BaseFactory):

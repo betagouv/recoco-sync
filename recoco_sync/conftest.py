@@ -247,9 +247,9 @@ def questions_payload_object():
 
 @pytest.fixture(autouse=True)
 def mock_recoco_client_httpx_responses(respx_mock, questions_payload_object):
-    respx_mock.post(f"{settings.API_URL_EXAMPLE}/token/").mock(
+    respx_mock.post(f"{settings.RECOCO_API_URL_EXAMPLE}/token/").mock(
         return_value=httpx.Response(200, json={"access": "token"})
     )
-    respx_mock.get(f"{settings.API_URL_EXAMPLE}/survey/questions/?limit=500").mock(
+    respx_mock.get(f"{settings.RECOCO_API_URL_EXAMPLE}/survey/questions/?limit=500").mock(
         return_value=httpx.Response(200, json=questions_payload_object)
     )
