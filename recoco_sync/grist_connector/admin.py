@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from django import forms
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
 from httpx import HTTPStatusError
 
-from .choices import GristColumnType
 from .connectors import (
     GristConnector,
     check_table_columns_consistency,
@@ -46,23 +44,6 @@ class GristColumnAdmin(admin.ModelAdmin):
         )
 
 
-class GristFilterInlineForm(forms.ModelForm):
-    grist_column = forms.ModelChoiceField(
-        queryset=GristColumn.objects.filter(
-            type__in=(
-                GristColumnType.BOOL,
-                GristColumnType.TEXT,
-                GristColumnType.NUMERIC,
-                GristColumnType.INTEGER,
-                GristColumnType.CHOICE,
-                GristColumnType.CHOICE_LIST,
-            )
-        )
-        .exclude(label__startswith="PJ")
-        .order_by("label"),
-    )
-
-
 class GristConfigColumnInline(admin.TabularInline):
     model = GristColumn
     extra = 0
@@ -87,9 +68,15 @@ class GristConfigAdmin(admin.ModelAdmin):
         "reset_columns",
     )
 
-    list_select_related = ("webhook_config",)
-
     inlines = (GristConfigColumnInline,)
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("webhook_config")
+            .prefetch_related("columns")
+        )
 
     @admin.action(
         description="Créer ou mettre à jour la table Grist des configurations sélectionnées"

@@ -46,12 +46,12 @@ class GristConfig(BaseModel):
                     "type": GristColumnType(column.type).label,
                 },
             }
-            for column in self.columns.order_by("created")
+            for column in self.columns.all()
         ]
 
     @property
     def table_headers(self) -> list[str]:
-        return list(self.columns.order_by("created").values_list("col_id", flat=True))
+        return list(self.columns.values_list("col_id", flat=True))
 
     def __str__(self) -> str:
         return self.name or self.doc_id
@@ -76,7 +76,7 @@ class GristColumn(BaseModel):
 
     class Meta:
         db_table = "gristcolumn"
-        ordering = ("col_id",)  # TODO: change default order to "created"
+        ordering = ("created", "col_id")
         verbose_name = "Grist column"
         verbose_name_plural = "Grist columns"
         unique_together = [
