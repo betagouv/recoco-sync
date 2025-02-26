@@ -265,7 +265,7 @@ def grist_table_columns():
                 "id": "thematiques",
                 "fields": {
                     "label": "Thématique(s)",
-                    "type": "Text",
+                    "type": "ChoiceList",
                 },
             },
             {
@@ -279,7 +279,7 @@ def grist_table_columns():
                 "id": "maturite_du_projet",
                 "fields": {
                     "label": "Maturité du projet",
-                    "type": "Text",
+                    "type": "ChoiceList",
                 },
             },
         ]

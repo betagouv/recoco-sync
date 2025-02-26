@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from unittest import TestCase
 from unittest.mock import patch
 
 import pytest
@@ -9,7 +8,7 @@ from grist_connector.tasks import populate_grist_table, refresh_grist_table
 from .factories import GristConfigFactory
 
 
-class PopulateGristTableTests(TestCase):
+class TestPopulateGristTable:
     @pytest.mark.django_db
     def test_config_does_not_exist(self):
         with patch("grist_connector.tasks.logger.error") as logger_mock:
@@ -19,8 +18,8 @@ class PopulateGristTableTests(TestCase):
         )
 
 
-class RefreshGristTableTests(TestCase):
-    @pytest.mark.django_db
+@pytest.mark.django_db
+class TestRefreshGristTable:
     def test_config_does_not_exist(self):
         with patch("grist_connector.tasks.logger.error") as logger_mock:
             refresh_grist_table(config_id="40d26f87-8b91-4670-a196-bfdcbc39eabb")
@@ -28,7 +27,6 @@ class RefreshGristTableTests(TestCase):
             "GristConfig with id=40d26f87-8b91-4670-a196-bfdcbc39eabb does not exist"
         )
 
-    @pytest.mark.django_db
     @patch("grist_connector.tasks.update_or_create_project_record")
     @patch("grist_connector.connectors.GristConnector.fetch_projects_data")
     def test_update_or_create_project_record_call(

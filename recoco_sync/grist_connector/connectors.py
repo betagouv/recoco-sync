@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, assert_never
 
 from django.db import transaction
 from main.connectors import Connector
 from main.models import WebhookEvent
+from main.utils import QuestionType, get_question_type
 
 from .choices import GristColumnType
 from .clients import GristApiClient
@@ -65,12 +66,20 @@ class GristConnector(Connector):
                 grist_config=config,
                 col_id=question.get("slug").replace("-", "_"),
                 label=question.get("text_short"),
-                type=self._get_column_type_from_payload(question),
+                type=self.get_column_type_from_payload(question),
             )
 
-    def _get_column_type_from_payload(self, question: dict[str, Any]) -> GristColumnType:
-        # FIXME: implement this method
-        return GristColumnType.TEXT
+    @staticmethod
+    def get_column_type_from_payload(question: dict[str, Any]) -> GristColumnType:
+        match get_question_type(question):
+            case QuestionType.YES_NO:
+                return GristColumnType.BOOL
+            case QuestionType.MULTIPLE:
+                return GristColumnType.CHOICE_LIST
+            case QuestionType.REGULAR | QuestionType.YES_NO_MAYBE:
+                return GristColumnType.TEXT
+            case _:
+                assert_never(question)
 
 
 def update_or_create_project_record(config: GristConfig, project_id: int, project_data: dict):

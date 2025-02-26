@@ -670,7 +670,6 @@ dev = [
     { name = "pytest-xdist" },
     { name = "respx" },
     { name = "ruff" },
-    { name = "unittest-parametrize" },
 ]
 
 [package.metadata]
@@ -701,7 +700,6 @@ dev = [
     { name = "pytest-xdist", specifier = ">=3.6.1" },
     { name = "respx", specifier = ">=0.22.0" },
     { name = "ruff", specifier = ">=0.6.8" },
-    { name = "unittest-parametrize", specifier = ">=1.4.0" },
 ]
 
 [[package]]
@@ -837,15 +835,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/43/0f/fa4723f22942480be4ca9527bbde8d43f6c3f2fe8412f00e7f5f6746bc8b/tzdata-2025.1.tar.gz", hash = "sha256:24894909e88cdb28bd1636c6887801df64cb485bd593f2fd83ef29075a81d694", size = 194950 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0f/dd/84f10e23edd882c6f968c21c2434fe67bd4a528967067515feca9e611e5e/tzdata-2025.1-py2.py3-none-any.whl", hash = "sha256:7e127113816800496f027041c570f50bcd464a020098a3b6b199517772303639", size = 346762 },
-]
-
-[[package]]
-name = "unittest-parametrize"
-version = "1.6.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/14/87/7213448c3151f8cccc410912927fc8f45b12b947b2093bd7ff19335138d5/unittest_parametrize-1.6.0.tar.gz", hash = "sha256:d9d2209a265b61b310ce81c1890f0e3a2282025deae758773f04d5a692cf1a3f", size = 12863 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f1/42/6cb88de166a949ce51ca817d04313508134650516c21b31f2fd2c97e6462/unittest_parametrize-1.6.0-py3-none-any.whl", hash = "sha256:fcbc0023304b08624b38a4762d25b691468d66f61fd5f11672b372ed71eee0e2", size = 8294 },
 ]
 
 [[package]]

@@ -10,6 +10,7 @@ from typing import Any
 from django.apps import apps
 from django.utils.module_loading import module_has_submodule
 from main.models import WebhookEvent
+from main.utils import QuestionType, get_question_type
 
 from .clients import RecocoApiClient
 
@@ -69,23 +70,33 @@ class Connector(metaclass=ABCMeta):
     def map_from_survey_answer_payload_object(
         self, payload: dict[str, Any], **kwargs
     ) -> dict[str, Any]:
-        col_id = str(payload["question"]["slug"]).replace("-", "_")
-
-        choices = payload.get("choices")
-        comment = payload.get("comment")
-
         data = {}
 
-        if len(choices) > 0:
-            data[col_id] = ",".join([c["text"] for c in choices])
-            if comment:
+        question = payload.get("question")
+        if not question:
+            return data
+
+        question_slug = question.get("slug")
+        if not question_slug:
+            return data
+
+        col_id = str(question_slug).replace("-", "_")
+        choices = payload.get("choices", [])
+        comment = payload.get("comment", "")
+
+        match get_question_type(question):
+            case QuestionType.MULTIPLE:
+                data[col_id] = ",".join([c["text"] for c in choices])
                 data[f"{col_id}_comment"] = comment
 
-        # FIXME: handle boolean question case
-        # elif "cas du Oui/Non"
+            case QuestionType.YES_NO:
+                data[col_id] = (
+                    str(choices[0]["text"]).lower() == "oui" if len(choices) > 0 else False
+                )
+                data[f"{col_id}_comment"] = comment
 
-        else:
-            data[col_id] = comment
+            case QuestionType.REGULAR | QuestionType.YES_NO_MAYBE:
+                data[col_id] = comment
 
         if attachment := payload.get("attachment"):
             data[f"{col_id}_attachment"] = attachment
