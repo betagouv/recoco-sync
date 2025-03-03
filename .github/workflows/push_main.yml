@@ -20,9 +20,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy to Scalingo (staging)
-        uses: kolok/deploy-to-scalingo@v1
-        with:
-          ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
-          app-name: mec-connect-staging
-          known-host: ssh.osc-fr1.scalingo.com
+      # FIXME: adapt deployment
+      # - name: Deploy to Staging (staging)
+      #   uses: kolok/deploy-to-scalingo@v1
+      #   with:
+      #     ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
+      #     app-name: mec-connect-staging
+      #     known-host: ssh.osc-fr1.scalingo.com

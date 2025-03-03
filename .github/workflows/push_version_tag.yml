@@ -34,9 +34,10 @@ jobs:
         - name: Checkout repository
           uses: actions/checkout@v4
 
-        - name: Deploy to Scalingo (production)
-          uses: kolok/deploy-to-scalingo@v1
-          with:
-            ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
-            app-name: recoco-sync-prod
-            known-host: ssh.osc-secnum-fr1.scalingo.com
+        # FIXME: adapt deployment
+        # - name: Deploy to Scalingo (production)
+        #   uses: kolok/deploy-to-scalingo@v1
+        #   with:
+        #     ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
+        #     app-name: recoco-sync-prod
+        #     known-host: ssh.osc-secnum-fr1.scalingo.com
