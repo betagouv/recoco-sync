@@ -30,6 +30,9 @@ class TestGristConnector:
             "department_code": 44,
             "location": "rue des hirondelles",
             "tags": "tag1,tag2",
+            "organization": "Commune de Bayonne",
+            "created": "2023-10-10T09:50:32.182591+02:00",
+            "modified": "2024-05-24T10:54:21.653995+02:00",
         }
 
     def test_map_from_survey_answer_payload_object(self, survey_answer_payload_object):

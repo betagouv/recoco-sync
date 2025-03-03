@@ -8,6 +8,7 @@ class GristColumnType(models.TextChoices):
     CHOICE = "choice", "Choice"
     CHOICE_LIST = "choice_list", "ChoiceList"
     DATE = "date", "Date"
+    DATETIME = "datetime", "DateTime:Europe/Amsterdam"
     INTEGER = "integer", "Int"
     NUMERIC = "numeric", "Numeric"
     TEXT = "text", "Text"

@@ -282,6 +282,27 @@ def grist_table_columns():
                     "type": "ChoiceList",
                 },
             },
+            {
+                "id": "created",
+                "fields": {
+                    "label": "Créé le",
+                    "type": "DateTime:Europe/Amsterdam",
+                },
+            },
+            {
+                "id": "modified",
+                "fields": {
+                    "label": "Modifié le",
+                    "type": "DateTime:Europe/Amsterdam",
+                },
+            },
+            {
+                "id": "organization",
+                "fields": {
+                    "label": "Organisation",
+                    "type": "Text",
+                },
+            },
         ]
     }
 
