@@ -19,14 +19,6 @@ project_columns_spec = {
         "label": "Etiquettes",
         "type": GristColumnType.CHOICE_LIST,
     },
-    "topics": {
-        "label": "Thématiques",
-        "type": GristColumnType.CHOICE_LIST,
-    },
-    "topics_comment": {
-        "label": "Commentaire thématiques",
-        "type": GristColumnType.TEXT,
-    },
     "city": {
         "label": "Commune",
         "type": GristColumnType.TEXT,
@@ -50,5 +42,17 @@ project_columns_spec = {
     "location": {
         "label": "Lieu",
         "type": GristColumnType.TEXT,
+    },
+    "organization": {
+        "label": "Organisation",
+        "type": GristColumnType.TEXT,
+    },
+    "created": {
+        "label": "Créé le",
+        "type": GristColumnType.DATETIME,
+    },
+    "modified": {
+        "label": "Modifié le",
+        "type": GristColumnType.DATETIME,
     },
 }

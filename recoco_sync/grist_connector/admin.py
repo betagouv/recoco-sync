@@ -3,6 +3,8 @@ from __future__ import annotations
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.urls import reverse
+from django.utils.html import format_html
 from httpx import HTTPStatusError
 
 from .connectors import (
@@ -57,7 +59,7 @@ class GristConfigAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "name",
-        "api_url",
+        "related_webhook_config",
         "enabled",
     )
 
@@ -69,6 +71,16 @@ class GristConfigAdmin(admin.ModelAdmin):
     )
 
     inlines = (GristConfigColumnInline,)
+
+    list_select_related = ("webhook_config",)
+
+    @admin.display(description="Webhook config")
+    def related_webhook_config(self, obj: GristConfig) -> str | None:
+        return format_html(
+            "<a href='{}'>{}</a>",
+            reverse("admin:main_webhookconfig_change", args=[obj.webhook_config.pk]),
+            obj.webhook_config.code,
+        )
 
     def get_queryset(self, request):
         return (
