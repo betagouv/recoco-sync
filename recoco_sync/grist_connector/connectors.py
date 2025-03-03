@@ -62,11 +62,15 @@ class GristConnector(Connector):
 
         questions = self.get_recoco_api_client(config=config).get_questions()
         for question in questions.get("results"):
-            GristColumn.objects.create(
+            col_id = question.get("slug").replace("-", "_")
+
+            col_type = self.get_column_type_from_payload(question)
+            col_label = (question.get("text_short") or question.get("text") or col_id)[:100]
+
+            GristColumn.objects.get_or_create(
                 grist_config=config,
-                col_id=question.get("slug").replace("-", "_"),
-                label=question.get("text_short"),
-                type=self.get_column_type_from_payload(question),
+                col_id=col_id,
+                defaults={"label": col_label, "type": col_type},
             )
 
     @staticmethod
