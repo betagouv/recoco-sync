@@ -28,7 +28,6 @@ def process_webhook_event(event_id: int):
         case _:
             assert_never(event.object_type)
 
-    # TODO: catch exceptions and mark event as failed
     for connector in get_connectors():
         connector.update_project(project_id=project_id, event=event)
 
