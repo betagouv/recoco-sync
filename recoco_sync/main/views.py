@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from copy import deepcopy as copy
 from functools import partial
 
 from django.db import transaction
@@ -33,15 +32,18 @@ def webhook(request: HttpRequest, code: str, payload: WebhookEventSchema):
             "message": "Webhook is disabled",
         }
 
-    # FIXME: fix this stuff, make something simpler
-    data = payload.dict()
-    data["payload"] = copy(data)
-    obj = data.pop("object")
-    data["object_id"] = obj["id"]
-    data["webhook_config_id"] = config.id
+    event_data = payload.dict()
+    inner_obj = event_data.pop("object")
+    event_data.update(
+        {
+            "object_id": inner_obj["id"],
+            "webhook_config_id": config.id,
+            "payload": payload.dict(),
+        }
+    )
 
     with transaction.atomic():
-        event = WebhookEvent.create_from_request(request, **data)
+        event = WebhookEvent.create_from_request(request, **event_data)
         transaction.on_commit(partial(on_webhook_event_commit, event=event))
 
     return {
