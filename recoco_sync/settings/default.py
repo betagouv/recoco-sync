@@ -166,3 +166,9 @@ if SENTRY_URL := env.str("SENTRY_URL", default=None):
         traces_sample_rate=0.05,
         send_default_pii=True,
     )
+
+#
+# Grist
+#
+
+TABLE_COLUMN_HEADER_MAX_LENGTH = env.str("TABLE_COLUMN_HEADER_MAX_LENGTH", default=80)

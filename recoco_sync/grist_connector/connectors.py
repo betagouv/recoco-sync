@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Any, assert_never
 
+from django.conf import settings
 from django.db import transaction
 from main.connectors import Connector
 from main.models import WebhookEvent
@@ -62,11 +63,13 @@ class GristConnector(Connector):
 
         questions = self.get_recoco_api_client(config=config).get_questions()
         for question in questions.get("results"):
-            GristColumn.objects.create(
+            GristColumn.objects.get_or_create(
                 grist_config=config,
                 col_id=question.get("slug").replace("-", "_"),
-                label=question.get("text_short"),
-                type=self.get_column_type_from_payload(question),
+                defaults={
+                    "label": self.get_column_label_from_payload(question),
+                    "type": self.get_column_type_from_payload(question),
+                },
             )
 
     @staticmethod
@@ -80,6 +83,17 @@ class GristConnector(Connector):
                 return GristColumnType.TEXT
             case _:
                 assert_never(question)
+
+    @staticmethod
+    def get_column_label_from_payload(question: dict[str, Any]) -> str:
+        col_label = (
+            question.get("text_short")
+            or question.get("text")
+            or question.get("slug").replace("_", " ").title()
+        )
+        if len(col_label) > settings.TABLE_COLUMN_HEADER_MAX_LENGTH:
+            col_label = f"{col_label[: settings.TABLE_COLUMN_HEADER_MAX_LENGTH - 3]}..."
+        return col_label
 
 
 def update_or_create_project_record(config: GristConfig, project_id: int, project_data: dict):
