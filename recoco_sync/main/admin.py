@@ -2,9 +2,12 @@ from __future__ import annotations
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
 from .models import User, WebhookConfig, WebhookEvent
+
+admin.site.unregister(Group)
 
 
 @admin.register(WebhookConfig)
