@@ -1,7 +1,13 @@
 [project]
 name = "recoco-sync"
-version = "0.2.2"
-description = "Add your description here"
+version = "0.1.0"
+description = "Recoco-sync est une application qui permet la synchronisation des portails de Recommandations Collaboratives avec des applications tierces."
+authors = [{ name = "Recoco Dev Team" }]
+maintainers = [
+    { name = "Guillaume Libersat", email = "guillaume.libersat@beta.gouv.fr" },
+    { name = "Etchegoyen Matthieu", email = "etchegom@gmail.com" },
+]
+license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -12,7 +18,6 @@ dependencies = [
     "django-model-utils>=5.0.0",
     "django-ninja>=1.3.0",
     "django>=5.1.1",
-    "gunicorn>=23.0.0",
     "httpx>=0.27.2",
     "psycopg2-binary>=2.9.9",
     "redis>=5.1.0",
@@ -21,6 +26,10 @@ dependencies = [
     "django-browser-reload>=1.18.0",
     "django-debug-toolbar>=5.0.1",
 ]
+
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
 
 [tool.uv]
 dev-dependencies = [
@@ -72,8 +81,7 @@ ignore = [
 [tool.ruff.lint.extend-per-file-ignores]
 "__init__.py" = ["F401", "F403"]
 "sandbox/*" = ["T201", "T203"]
-"**/settings/testing.py" = ["E402", "F403"]
-"**/settings/dev.py" = ["E402", "F403", "F405"]
+"**/settings/*.py" = ["E402", "F403", "F405"]
 "**/migrations/*.py" = ["E501"]
 
 [tool.ruff.lint.mccabe]

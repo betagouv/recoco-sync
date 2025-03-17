@@ -14,7 +14,7 @@ sys.path.insert(0, str(BASE_DIR / "recoco_sync"))
 env = Env()
 ENVIRONMENT = env.str("ENVIRONMENT", default="dev")
 
-dotenv_file = BASE_DIR / ".env"
+dotenv_file = Path(env.str("DOTENV_FILE", default=BASE_DIR / ".env"))
 if ENVIRONMENT != "testing" and dotenv_file.exists():
     env.read_env(dotenv_file)
 

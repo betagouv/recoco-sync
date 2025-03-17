@@ -31,3 +31,6 @@ install:
 freeze-reqs:
 	@uv export --format requirements-txt --no-hashes --no-dev --output-file requirements.txt
 	@bash bin/update_runtime.sh
+
+build:
+	@uv build
