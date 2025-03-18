@@ -5,8 +5,9 @@ import uuid
 import factory
 import factory.fuzzy
 from django.conf import settings
-from main.choices import ObjectType
-from main.models import WebhookConfig, WebhookEvent
+
+from recoco_sync.main.choices import ObjectType
+from recoco_sync.main.models import WebhookConfig, WebhookEvent
 
 
 class BaseFactory(factory.django.DjangoModelFactory):

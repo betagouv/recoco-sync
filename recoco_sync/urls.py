@@ -11,7 +11,7 @@ admin.site.index_title = "Recoco-sync administration"
 
 
 urlpatterns = [
-    path("", include("main.urls")),
+    path("", include("recoco_sync.main.urls")),
     path("admin/", admin.site.urls),
 ]
 

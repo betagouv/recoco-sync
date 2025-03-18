@@ -3,13 +3,14 @@ from __future__ import annotations
 from unittest.mock import patch
 
 import pytest
-from grist_connector.choices import GristColumnType
-from grist_connector.connectors import (
+
+from recoco_sync.grist_connector.choices import GristColumnType
+from recoco_sync.grist_connector.connectors import (
     GristConnector,
     check_table_columns_consistency,
     grist_table_exists,
 )
-from main.utils import QuestionType
+from recoco_sync.main.utils import QuestionType
 
 from .factories import GristColumnFactory, GristConfigFactory
 
@@ -54,7 +55,7 @@ class TestGristConnector:
     )
     def test_get_column_type_from_payload(self, question_type, expected_grist_type):
         with patch(
-            "grist_connector.connectors.get_question_type",
+            "recoco_sync.grist_connector.connectors.get_question_type",
             return_value=question_type,
         ):
             assert GristConnector.get_column_type_from_payload(question_type) == expected_grist_type
@@ -63,7 +64,7 @@ class TestGristConnector:
 def test_grist_table_exists():
     config = GristConfigFactory.build()
     with patch(
-        "grist_connector.connectors.GristApiClient.table_exists", return_value=True
+        "recoco_sync.grist_connector.connectors.GristApiClient.table_exists", return_value=True
     ) as mock_table_exists:
         assert grist_table_exists(config) is True
         mock_table_exists.assert_called_once_with(table_id=config.table_id)

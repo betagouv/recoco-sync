@@ -9,8 +9,9 @@ from typing import Any
 
 from django.apps import apps
 from django.utils.module_loading import module_has_submodule
-from main.models import WebhookEvent
-from main.utils import QuestionType, get_question_type
+
+from recoco_sync.main.models import WebhookEvent
+from recoco_sync.main.utils import QuestionType, get_question_type
 
 from .clients import RecocoApiClient
 

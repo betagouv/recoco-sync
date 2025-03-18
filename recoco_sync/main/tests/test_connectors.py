@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from main.connectors import Connector
+from recoco_sync.main.connectors import Connector
 
 
 class ConnectorStub(Connector):

@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Any
 
 from django.db import models
-from main.models import WebhookConfig
 
+from recoco_sync.main.models import WebhookConfig
 from recoco_sync.utils.models import BaseModel
 
 from .choices import GristColumnType
