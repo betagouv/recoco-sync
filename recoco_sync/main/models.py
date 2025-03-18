@@ -36,6 +36,9 @@ class WebhookConfig(BaseModel):
         db_table = "webhookconfig"
         ordering = ("-created",)
 
+    def __str__(self):
+        return self.code
+
 
 class WebhookEvent(BaseModel):
     webhook_uuid = models.UUIDField()
