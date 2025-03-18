@@ -41,7 +41,6 @@ class WebhookConfig(BaseModel):
         return self.api_url.split("/")[2]
 
     def __str__(self):
-        # add domain of api_url to the string representation
         return f"{self.site_domain} - {self.code}"
 
 
