@@ -14,11 +14,14 @@ if [ -z "$DOTENV_FILE" ]; then
     exit 1
 fi
 
-echo "Setup python environment"
-rm -rf venv
-python -m venv venv
+if [ ! -d "venv" ]; then
+    echo "Create virtual environment"
+    python -m venv venv
+fi
 source venv/bin/activate
-pip install -U dist/*.whl
+
+echo "Install dependencies"
+pip install -U dist/*.whl --force-reinstall
 
 echo "Run Django commands"
 python manage.py migrate
