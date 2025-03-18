@@ -33,4 +33,5 @@ freeze-reqs:
 	@bash bin/update_runtime.sh
 
 build:
+	@rm -rf dist
 	@uv build

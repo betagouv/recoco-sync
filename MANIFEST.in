@@ -1,0 +1,1 @@
+recursive-include recoco_sync/templates *.html
