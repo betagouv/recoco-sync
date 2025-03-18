@@ -24,4 +24,4 @@ git tag vx.x.x
 git push --tags
 ```
 
-- Vérifier le déploiement dans Scalingo.
+- Vérifier le déploiement dans AD.
