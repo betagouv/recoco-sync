@@ -5,9 +5,10 @@ from typing import Any, assert_never
 
 from django.conf import settings
 from django.db import transaction
-from main.connectors import Connector
-from main.models import WebhookEvent
-from main.utils import QuestionType, get_question_type
+
+from recoco_sync.main.connectors import Connector
+from recoco_sync.main.models import WebhookEvent
+from recoco_sync.main.utils import QuestionType, get_question_type
 
 from .choices import GristColumnType
 from .clients import GristApiClient

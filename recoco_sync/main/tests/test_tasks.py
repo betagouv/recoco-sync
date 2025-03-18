@@ -3,8 +3,9 @@ from __future__ import annotations
 from unittest.mock import MagicMock, Mock, patch
 
 import pytest
-from main.choices import ObjectType, WebhookEventStatus
-from main.tasks import process_webhook_event
+
+from recoco_sync.main.choices import ObjectType, WebhookEventStatus
+from recoco_sync.main.tasks import process_webhook_event
 
 from .factories import WebhookEventFactory
 

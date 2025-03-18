@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import pytest
-from main.utils import QuestionType, get_question_type
+
+from recoco_sync.main.utils import QuestionType, get_question_type
 
 
 @pytest.mark.parametrize(

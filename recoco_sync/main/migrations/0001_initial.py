@@ -7,9 +7,10 @@ import uuid
 import django.core.serializers.json
 import django.db.models.deletion
 import django.utils.timezone
-import main.models
 import model_utils.fields
 from django.db import migrations, models
+
+import recoco_sync.main.models
 
 
 class Migration(migrations.Migration):
@@ -44,7 +45,9 @@ class Migration(migrations.Migration):
                 (
                     "code",
                     models.CharField(
-                        default=main.models.generate_random_code, max_length=32, unique=True
+                        default=recoco_sync.main.models.generate_random_code,
+                        max_length=32,
+                        unique=True,
                     ),
                 ),
                 ("api_url", models.URLField(max_length=255)),

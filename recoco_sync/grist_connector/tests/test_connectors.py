@@ -9,7 +9,8 @@ from grist_connector.connectors import (
     check_table_columns_consistency,
     grist_table_exists,
 )
-from main.utils import QuestionType
+
+from recoco_sync.main.utils import QuestionType
 
 from .factories import GristColumnFactory, GristConfigFactory
 

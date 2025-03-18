@@ -8,9 +8,10 @@ from django.conf import settings
 from grist_connector.choices import GristColumnType
 from grist_connector.connectors import GristConnector
 from grist_connector.models import GristColumn, GristConfig
-from main.choices import ObjectType
-from main.models import WebhookEvent
-from main.tests.factories import BaseFactory, WebhookConfigFactory
+
+from recoco_sync.main.choices import ObjectType
+from recoco_sync.main.models import WebhookEvent
+from recoco_sync.main.tests.factories import BaseFactory, WebhookConfigFactory
 
 
 class WebhookEventFactory(BaseFactory):

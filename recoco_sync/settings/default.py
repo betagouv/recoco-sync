@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import sentry_sdk
@@ -9,7 +8,6 @@ from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(BASE_DIR))
 
 env = Env()
 ENVIRONMENT = env.str("ENVIRONMENT", default="dev")
@@ -57,8 +55,8 @@ INSTALLED_APPS = (
         "django_extensions",
     ]
     + [
-        "main",
-        "grist_connector",
+        "recoco_sync.main",
+        "recoco_sync.grist_connector",
     ]
 )
 
