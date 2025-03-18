@@ -1,0 +1,10 @@
+name: "Check and test"
+on:
+  pull_request:
+
+jobs:
+  check:
+    uses: ./.github/workflows/run_check.yml
+
+  test:
+    uses: ./.github/workflows/run_tests.yml

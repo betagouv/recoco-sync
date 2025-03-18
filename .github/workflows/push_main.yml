@@ -1,6 +1,5 @@
-name: "Check and test"
+name: "Check, test and deploy to production"
 on:
-  pull_request:
   push:
     branches:
       - main
@@ -12,7 +11,7 @@ jobs:
   test:
     uses: ./.github/workflows/run_tests.yml
 
-  # FIXME: for test purposes, to remove and keep stuff in push_version_tag.yml only
+  # FIXME: move to push_version_tag.yml
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
