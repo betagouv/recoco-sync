@@ -9,9 +9,8 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
-from recoco_sync.utils.json import PrettyJSONEncoder
-from recoco_sync.utils.models import BaseModel
+from utils.json import PrettyJSONEncoder
+from utils.models import BaseModel
 
 from .choices import ObjectType, WebhookEventStatus
 from .managers import UserManager
