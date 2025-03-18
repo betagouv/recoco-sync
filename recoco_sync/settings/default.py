@@ -2,10 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import sentry_sdk
 from environ import Env
-from sentry_sdk.integrations.celery import CeleryIntegration
-from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -149,21 +146,6 @@ WEBHOOK_SECRET = env.str("WEBHOOK_SECRET")
 #
 RECOCO_API_USERNAME = env.str("RECOCO_API_USERNAME")
 RECOCO_API_PASSWORD = env.str("RECOCO_API_PASSWORD")
-
-#
-# Sentry
-#
-if SENTRY_URL := env.str("SENTRY_URL", default=None):
-    sentry_sdk.init(
-        dsn=SENTRY_URL,
-        integrations=[
-            DjangoIntegration(),
-            CeleryIntegration(),
-        ],
-        environment=ENVIRONMENT,
-        traces_sample_rate=0.05,
-        send_default_pii=True,
-    )
 
 #
 # Grist
