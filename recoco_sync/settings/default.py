@@ -8,13 +8,13 @@ from environ import Env
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(BASE_DIR / "recoco_sync"))
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(BASE_DIR))
 
 env = Env()
 ENVIRONMENT = env.str("ENVIRONMENT", default="dev")
 
-dotenv_file = Path(env.str("DOTENV_FILE", default=BASE_DIR / ".env"))
+dotenv_file = Path(env.str("DOTENV_FILE", default=BASE_DIR / ".." / ".env"))
 if ENVIRONMENT != "testing" and dotenv_file.exists():
     env.read_env(dotenv_file)
 
@@ -76,7 +76,7 @@ MIDDLEWARE = [
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["recoco_sync/templates"],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
