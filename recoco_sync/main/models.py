@@ -36,8 +36,13 @@ class WebhookConfig(BaseModel):
         db_table = "webhookconfig"
         ordering = ("-created",)
 
+    @property
+    def site_domain(self) -> str:
+        return self.api_url.split("/")[2]
+
     def __str__(self):
-        return self.code
+        # add domain of api_url to the string representation
+        return f"{self.site_domain} - {self.code}"
 
 
 class WebhookEvent(BaseModel):
