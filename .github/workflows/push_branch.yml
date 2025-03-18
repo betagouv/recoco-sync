@@ -41,15 +41,12 @@ jobs:
 
         - name: Install the wheel and run the post deploy tasks
           uses: appleboy/ssh-action@v1
-          env:
-            DJANGO_SETTINGS_MODULE: "recoco_sync.settings.prod"
-            DOTENV_FILE: "/home/recocosync/app/.env"
           with:
             host: ${{ secrets.AD_HOST }}
             username: ${{ secrets.AD_USERNAME }}
             password: ${{ secrets.AD_PASSWORD }}
-            envs: DJANGO_SETTINGS_MODULE,DOTENV_FILE
             script: |
+              source .bashrc
               cd app
               chmod +x bin/*.sh
               ./bin/post_deploy.sh
