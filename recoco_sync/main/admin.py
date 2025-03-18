@@ -3,6 +3,7 @@ from __future__ import annotations
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from .models import User, WebhookConfig, WebhookEvent
@@ -16,6 +17,7 @@ class WebhookConfigAdmin(admin.ModelAdmin):
         "id",
         "code",
         "api_url",
+        "webhook_url",
         "enabled",
     )
 
@@ -23,6 +25,10 @@ class WebhookConfigAdmin(admin.ModelAdmin):
         "enabled",
         "created",
     )
+
+    @admin.display(description="Webhook URL")
+    def webhook_url(self, obj: WebhookConfig) -> str:
+        return reverse("api:webhook", kwargs={"code": obj.code})
 
 
 @admin.register(WebhookEvent)
