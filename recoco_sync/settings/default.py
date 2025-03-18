@@ -7,12 +7,12 @@ from environ import Env
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = Env()
 ENVIRONMENT = env.str("ENVIRONMENT", default="dev")
 
-dotenv_file = Path(env.str("DOTENV_FILE", default=BASE_DIR / ".." / ".env"))
+dotenv_file = Path(env.str("DOTENV_FILE", default=BASE_DIR / ".env"))
 if ENVIRONMENT != "testing" and dotenv_file.exists():
     env.read_env(dotenv_file)
 
@@ -26,7 +26,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #
 # Static files
 #
-STATIC_ROOT = BASE_DIR / "static"
+STATIC_ROOT = BASE_DIR / "recoco_sync" / "static"
 STATIC_URL = "/static/"
 
 #
@@ -74,7 +74,7 @@ MIDDLEWARE = [
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "recoco_sync" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
