@@ -34,10 +34,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 include-package-data = true
 
-[tool.setuptools.packages.find]
-where = ["recoco_sync"]
-namespaces = false
-
 [tool.uv]
 dev-dependencies = [
     "factory-boy>=3.3.1",

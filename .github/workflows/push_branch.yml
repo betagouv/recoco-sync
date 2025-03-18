@@ -36,8 +36,18 @@ jobs:
             host: ${{ secrets.AD_HOST }}
             username: ${{ secrets.AD_USERNAME }}
             password: ${{ secrets.AD_PASSWORD }}
-            source: "dist/*.whl, manage.py, bin/post_deploy.sh, bin/run_worker.sh, recoco_sync/wsgi.py"
+            source: "dist/*.whl, manage.py, bin/post_deploy.sh, bin/run_worker.sh"
             target: app
+
+        - name: Copy wsgi file
+          uses: appleboy/scp-action@v0.1.7
+          with:
+            host: ${{ secrets.AD_HOST }}
+            username: ${{ secrets.AD_USERNAME }}
+            password: ${{ secrets.AD_PASSWORD }}
+            source: "recoco_sync/wsgi.py"
+            target: app
+            strip_components: 1
 
         - name: Install the wheel and run the post deploy tasks
           uses: appleboy/ssh-action@v1
