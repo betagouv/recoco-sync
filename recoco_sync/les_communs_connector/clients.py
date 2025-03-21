@@ -11,22 +11,16 @@ from recoco_sync.main.clients import TokenBearerAuth, raise_on_4xx_5xx
 class LesCommunsApiClient:
     _client: Client
 
-    def __init__(self, api_url: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self._client = Client(
             auth=TokenBearerAuth(
-                base_url=api_url,
+                base_url=settings.LES_COMMUNS_API_URL,
                 username=settings.LES_COMMUNS_API_USERNAME,
                 password=settings.LES_COMMUNS_API_PASSWORD,
             ),
-            headers=self.headers,
-            base_url=api_url,
+            base_url=settings.LES_COMMUNS_API_URL,
             event_hooks={"response": [raise_on_4xx_5xx]},
-            **kwargs,
         )
-
-    @property
-    def headers(self) -> dict[str, str]:
-        return {"Authorization": f"Bearer {self.api_key}"}
 
     def create_project(self, payload: dict[str, str]) -> dict[str, Any]:
         response = self._client.post("/projets/", json=payload)
