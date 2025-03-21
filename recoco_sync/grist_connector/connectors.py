@@ -117,7 +117,7 @@ class GristConnector(Connector):
         self, config: GristConfig, project_id: int, project_data: dict
     ):
         """
-        Update a record related to a givent project, in a Grist table,
+        Update a record related to a given project on Grist side,
         or create it if it doesn't exist.
         """
 

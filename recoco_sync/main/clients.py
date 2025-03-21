@@ -6,14 +6,18 @@ from django.conf import settings
 from httpx import Auth, Client, Request, Response
 
 
-class RecocoApiAuth(Auth):
+class TokenBearerAuth(Auth):
     requires_response_body = True
     access_token: str = None
     refresh_token: str = None
     base_url: str
+    username: str
+    password: str
 
-    def __init__(self, base_url: str, *args, **kwargs):
+    def __init__(self, base_url: str, username: str, password: str, *args, **kwargs):
         self.base_url = base_url
+        self.username = username
+        self.password = password
         super().__init__(*args, **kwargs)
 
     def auth_flow(self, request: Request):
@@ -37,8 +41,8 @@ class RecocoApiAuth(Auth):
             "POST",
             f"{self.base_url}/token/",
             data={
-                "username": settings.RECOCO_API_USERNAME,
-                "password": settings.RECOCO_API_PASSWORD,
+                "username": self.username,
+                "password": self.password,
             },
         )
 
@@ -67,7 +71,11 @@ class RecocoApiClient:
 
     def __init__(self, api_url: str, *args, **kwargs):
         self._client = Client(
-            auth=RecocoApiAuth(base_url=api_url),
+            auth=TokenBearerAuth(
+                base_url=api_url,
+                username=settings.RECOCO_API_USERNAME,
+                password=settings.RECOCO_API_PASSWORD,
+            ),
             base_url=api_url,
             event_hooks={"response": [raise_on_4xx_5xx]},
             **kwargs,
