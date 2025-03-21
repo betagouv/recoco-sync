@@ -31,7 +31,7 @@ def test_task_triggered_and_event_saved(object_type, object_id, object_payload):
     with patch("recoco_sync.main.tasks.get_connectors", Mock(return_value=[fake_connector])):
         process_webhook_event(event_id=event.id)
 
-    fake_connector.update_project.assert_called_once_with(project_id=999, event=event)
+    fake_connector.on_project_event.assert_called_once_with(project_id=999, event=event)
 
     event.refresh_from_db()
     assert event.status == WebhookEventStatus.PROCESSED

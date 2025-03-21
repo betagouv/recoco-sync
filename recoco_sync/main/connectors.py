@@ -118,10 +118,6 @@ class Connector(metaclass=ABCMeta):
 
         return data
 
-    @abstractmethod
-    def update_project(self, project_id: int, event: WebhookEvent) -> None:
-        pass
-
     def fetch_questions_data(self, **kwargs) -> Generator[tuple[int, dict]]:
         """Fetch data related to questions through the Recoco API."""
 
@@ -135,6 +131,10 @@ class Connector(metaclass=ABCMeta):
 
     def map_from_question_payload_object(self, payload: dict[str, Any], **kwargs) -> dict[str, Any]:
         return payload
+
+    @abstractmethod
+    def on_project_event(self, project_id: int, event: WebhookEvent) -> None:
+        pass
 
 
 connectors: list[Connector] = []

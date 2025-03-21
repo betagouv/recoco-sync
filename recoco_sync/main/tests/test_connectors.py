@@ -4,7 +4,7 @@ from recoco_sync.main.connectors import Connector
 
 
 class ConnectorStub(Connector):
-    def update_project(self, project_id, event):
+    def on_project_event(self, project_id, event):
         pass
 
 

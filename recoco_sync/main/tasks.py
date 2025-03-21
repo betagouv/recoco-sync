@@ -29,7 +29,7 @@ def process_webhook_event(event_id: int):
             assert_never(event.object_type)
 
     for connector in get_connectors():
-        connector.update_project(project_id=project_id, event=event)
+        connector.on_project_event(project_id=project_id, event=event)
 
     event.status = WebhookEventStatus.PROCESSED
     event.save()

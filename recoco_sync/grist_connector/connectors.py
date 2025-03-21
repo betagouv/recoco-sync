@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class GristConnector(Connector):
-    def update_project(self, project_id: int, event: WebhookEvent) -> None:
+    def on_project_event(self, project_id: int, event: WebhookEvent) -> None:
         for config in GristConfig.objects.filter(
             enabled=True, webhook_config_id=event.webhook_config.pk
         ):
