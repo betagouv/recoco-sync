@@ -4,36 +4,35 @@ from recoco_sync.main.connectors import Connector
 from recoco_sync.main.models import WebhookEvent
 
 from .clients import LesCommunsApiClient
-from .models import ProjetLesCommuns
+from .models import LesCommunsConfig, LesCommunsProjet
 
 
 class LesCommunsConnector(Connector):
-    les_communs_api_client: LesCommunsApiClient
-
-    def __init__(self):
-        super().__init__()
-        self.les_communs_api_client = LesCommunsApiClient()
-
     def on_project_event(self, project_id: int, event: WebhookEvent):
         # ETQ collectivité, quand je dépose un projet sur un portail Reco-co,
         # je veux pouvoir le retrouver sur les autres sites qui font partie des "communs",
         # sans avoir besoin de resaisir les infos déjà données (enjeu du Dites le nous une fois).
         # On ne va pas envoyer les projets de tous les portails, on va commencer par UV
 
-        if not event.webhook_config.site_domain.startswith("urbanbitaliz"):
-            return
-
         _, project_data = next(self.fetch_projects_data(project_ids=[project_id]))
 
-        proj = ProjetLesCommuns.objects.filter(projet_id=project_id).first()
-        if proj is None:
-            response = self.les_communs_api_client.create_project(project_data)
-            ProjetLesCommuns.objects.create(
-                projet_id=project_id, les_communs_project_id=response["id"]
-            )
-            return
+        for config in LesCommunsConfig.objects.filter(
+            enabled=True, webhook_config=event.webhook_config
+        ):
+            api_client = LesCommunsApiClient.from_config(config)
 
-        self.les_communs_api_client.update_project(project_data)
+            proj = LesCommunsProjet.objects.filter(projet_id=project_id, config=config).first()
+
+            if proj is None:
+                response = api_client.create_project(project_data)
+                LesCommunsProjet.objects.create(
+                    projet_id=project_id,
+                    les_communs_project_id=response["id"],
+                    config=config,
+                )
+                return
+
+            api_client.update_project(project_data)
 
     def map_from_project_payload_object(self, payload, **kwargs):
         # Doc: https://les-communs-transition-ecologique-api-staging.osc-fr1.scalingo.io/api#/Projets/ProjetsController_create

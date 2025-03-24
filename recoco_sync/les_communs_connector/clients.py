@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Self
 
 from django.conf import settings
 from httpx import Client
 
 from recoco_sync.main.clients import TokenBearerAuth, raise_on_4xx_5xx
+
+from .models import LesCommunsConfig
 
 
 class LesCommunsApiClient:
@@ -20,6 +22,12 @@ class LesCommunsApiClient:
             ),
             base_url=settings.LES_COMMUNS_API_URL,
             event_hooks={"response": [raise_on_4xx_5xx]},
+        )
+
+    @classmethod
+    def from_config(cls, config: LesCommunsConfig) -> Self:
+        return cls(
+            # ...
         )
 
     def create_project(self, payload: dict[str, str]) -> dict[str, Any]:
