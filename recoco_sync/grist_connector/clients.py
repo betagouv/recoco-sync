@@ -55,14 +55,28 @@ class GristApiClient:
                 return True
         return False
 
-    def get_table_columns(self, table_id: str) -> list[dict[str, Any]]:
-        resp = self._client.get(f"docs/{self.doc_id}/tables/{table_id}/columns/")
-        return resp.json().get("columns", [])
-
     def create_table(self, table_id: str, columns: dict[str, Any]) -> dict[str, Any]:
         resp = self._client.post(
             f"docs/{self.doc_id}/tables/",
             json={"tables": [{"id": table_id, "columns": columns}]},
+        )
+        return resp.json()
+
+    def get_table_columns(self, table_id: str) -> list[dict[str, Any]]:
+        resp = self._client.get(f"docs/{self.doc_id}/tables/{table_id}/columns/")
+        return resp.json().get("columns", [])
+
+    def create_table_columns(self, table_id: str, columns: list[dict[str, Any]]) -> dict[str, Any]:
+        resp = self._client.post(
+            f"docs/{self.doc_id}/tables/{table_id}/columns/",
+            json={"columns": columns},
+        )
+        return resp.json()
+
+    def update_table_columns(self, table_id: str, columns: list[dict[str, Any]]) -> dict[str, Any]:
+        resp = self._client.patch(
+            f"docs/{self.doc_id}/tables/{table_id}/columns/",
+            json={"columns": columns},
         )
         return resp.json()
 

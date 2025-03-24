@@ -12,7 +12,7 @@ project_columns_spec = {
         "type": GristColumnType.TEXT,
     },
     "description": {
-        "label": "Descritpion du projet",
+        "label": "Description du projet",
         "type": GristColumnType.TEXT,
     },
     "tags": {
