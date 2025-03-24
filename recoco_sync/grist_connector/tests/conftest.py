@@ -61,7 +61,7 @@ def grist_table_columns():
                     "widgetOptions": "",
                     "isFormula": False,
                     "formula": "",
-                    "label": "Descritpion du projet",
+                    "label": "Description du projet",
                     "description": "",
                     "untieColIdFromLabel": False,
                     "summarySourceCol": 0,
