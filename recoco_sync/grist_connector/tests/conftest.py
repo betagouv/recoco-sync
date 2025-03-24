@@ -303,6 +303,20 @@ def grist_table_columns():
                     "type": "Text",
                 },
             },
+            {
+                "id": "latitude",
+                "fields": {
+                    "label": "Latitude",
+                    "type": "Numeric",
+                },
+            },
+            {
+                "id": "longitude",
+                "fields": {
+                    "label": "Longitude",
+                    "type": "Numeric",
+                },
+            },
         ]
     }
 

@@ -43,6 +43,14 @@ project_columns_spec = {
         "label": "Lieu",
         "type": GristColumnType.TEXT,
     },
+    "latitude": {
+        "label": "Latitude",
+        "type": GristColumnType.NUMERIC,
+    },
+    "longitude": {
+        "label": "Longitude",
+        "type": GristColumnType.NUMERIC,
+    },
     "organization": {
         "label": "Organisation",
         "type": GristColumnType.TEXT,
