@@ -150,13 +150,11 @@ class GristConfigAdmin(admin.ModelAdmin):
             if not self._check_config_is_enabled(request, config):
                 continue
 
-            if check_table_columns_consistency(config):
-                continue
-
             grist_client: GristApiClient = GristApiClient.from_config(config)
 
-            remote_table_columns = grist_client.get_table_columns(table_id=config.table_id)
-            indexed_remote_table_columns = {col["id"]: col for col in remote_table_columns}
+            indexed_remote_table_columns = {
+                col["id"]: col for col in grist_client.get_table_columns(table_id=config.table_id)
+            }
 
             for column in config.table_columns:
                 col_id = column["id"]
@@ -190,39 +188,30 @@ class GristConfigAdmin(admin.ModelAdmin):
                 ):
                     self.message_user(
                         request,
-                        f"Action sur la configuration {config.name}: mettre à jour manuellement "
-                        f"la colonne '{col_id}' (label: {remote_column['fields']['label']} "
-                        f", type: {remote_column['fields']['type']}).",
-                        messages.WARNING,
+                        f"Configuration {config.name}: mise à jour de la colonne '{col_id}'.",
+                        messages.SUCCESS,
                     )
-
-                    # FIXME: fail at the moment, col ID is changed for some reason
-                    # self.message_user(
-                    #     request,
-                    #     f"Configuration {config.name}: mise à jour de la colonne '{col_id}'.",
-                    #     messages.SUCCESS,
-                    # )
-                    # grist_client.update_table_columns(
-                    #     table_id=config.table_id,
-                    #     columns=[
-                    #         {
-                    #             "id": col_id,
-                    #             "fields": {
-                    #                 "label": column["fields"]["label"],
-                    #                 "type": column["fields"]["type"],
-                    #             },
-                    #         }
-                    #     ],
-                    # )
+                    grist_client.update_table_columns(
+                        table_id=config.table_id,
+                        columns=[
+                            {
+                                "id": col_id,
+                                "fields": {
+                                    "label": column["fields"]["label"],
+                                    "type": column["fields"]["type"],
+                                },
+                            }
+                        ],
+                    )
                     continue
 
-                # find out all columns that are in Grist but not in the config
-                config_columns_ids = [col["id"] for col in config.table_columns]
-                for remote_col_id in indexed_remote_table_columns:
-                    if remote_col_id not in config_columns_ids:
-                        self.message_user(
-                            request,
-                            f"Action sur la configuration {config.name}: colonne '{remote_col_id}' "
-                            "présente uniquement côté Grist.",
-                            messages.WARNING,
-                        )
+            # find out all columns that are in Grist but not in the config
+            config_columns_ids = [col["id"] for col in config.table_columns]
+            for remote_col_id in indexed_remote_table_columns.keys():
+                if remote_col_id not in config_columns_ids:
+                    self.message_user(
+                        request,
+                        f"Action sur la configuration {config.name}: la colonne '{remote_col_id}' "
+                        "existe uniquement côté Grist.",
+                        messages.WARNING,
+                    )
