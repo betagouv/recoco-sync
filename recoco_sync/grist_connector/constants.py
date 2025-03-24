@@ -12,7 +12,7 @@ project_columns_spec = {
         "type": GristColumnType.TEXT,
     },
     "description": {
-        "label": "Descritpion du projet",
+        "label": "Description du projet",
         "type": GristColumnType.TEXT,
     },
     "tags": {
@@ -42,6 +42,14 @@ project_columns_spec = {
     "location": {
         "label": "Lieu",
         "type": GristColumnType.TEXT,
+    },
+    "latitude": {
+        "label": "Latitude",
+        "type": GristColumnType.NUMERIC,
+    },
+    "longitude": {
+        "label": "Longitude",
+        "type": GristColumnType.NUMERIC,
     },
     "organization": {
         "label": "Organisation",

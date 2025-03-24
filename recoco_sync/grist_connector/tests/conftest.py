@@ -61,7 +61,7 @@ def grist_table_columns():
                     "widgetOptions": "",
                     "isFormula": False,
                     "formula": "",
-                    "label": "Descritpion du projet",
+                    "label": "Description du projet",
                     "description": "",
                     "untieColIdFromLabel": False,
                     "summarySourceCol": 0,
@@ -301,6 +301,20 @@ def grist_table_columns():
                 "fields": {
                     "label": "Organisation",
                     "type": "Text",
+                },
+            },
+            {
+                "id": "latitude",
+                "fields": {
+                    "label": "Latitude",
+                    "type": "Numeric",
+                },
+            },
+            {
+                "id": "longitude",
+                "fields": {
+                    "label": "Longitude",
+                    "type": "Numeric",
                 },
             },
         ]

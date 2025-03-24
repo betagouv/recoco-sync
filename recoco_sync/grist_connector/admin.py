@@ -5,8 +5,8 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.html import format_html
-from httpx import HTTPStatusError
 
+from .clients import GristApiClient
 from .connectors import (
     GristConnector,
     check_table_columns_consistency,
@@ -68,6 +68,7 @@ class GristConfigAdmin(admin.ModelAdmin):
     actions = (
         "setup_grist_table",
         "reset_columns",
+        "sync_columns",
     )
 
     inlines = (GristConfigColumnInline,)
@@ -90,65 +91,138 @@ class GristConfigAdmin(admin.ModelAdmin):
             .prefetch_related("columns")
         )
 
-    @admin.action(
-        description="Créer ou mettre à jour la table Grist des configurations sélectionnées"
-    )
+    def _check_config_is_enabled(self, request: HttpRequest, config: GristConfig) -> bool:
+        if not config.enabled:
+            self.message_user(request, f"Configuration {config}: inactive.", messages.ERROR)
+            return False
+        return True
+
+    @admin.action(description="Créer ou mettre à jour la table Grist")
     def setup_grist_table(self, request: HttpRequest, queryset: QuerySet[GristConfig]):
         for config in queryset:
-            self._setup_grist_table_from_config(request, config)
+            if not self._check_config_is_enabled(request, config):
+                continue
 
-    def _setup_grist_table_from_config(self, request: HttpRequest, config: GristConfig):
-        if not config.enabled:
-            self.message_user(
-                request,
-                f"Configuration {config}: inactive.",
-                messages.ERROR,
-            )
-            return
-
-        try:
             table_exists = grist_table_exists(config)
-        except HTTPStatusError as err:
-            if err.response.status_code == 404:
+            if not table_exists:
+                res = populate_grist_table.delay(config.id)
                 self.message_user(
                     request,
-                    f"Configuration {config}: le document {config.doc_id} n'existe pas.",
+                    f"Configuration {config}: une tâche de création a été lancée "
+                    f"(task ID: {res.id}).",
+                    messages.SUCCESS,
+                )
+                continue
+
+            if not check_table_columns_consistency(config):
+                self.message_user(
+                    request,
+                    f"Configuration {config}: les colonnes ne sont pas synchronisées."
+                    f"Impossible de mettre à jour la table {config.table_id}.",
                     messages.ERROR,
                 )
-                return
-            raise err
+                continue
 
-        if not table_exists:
-            res = populate_grist_table.delay(config.id)
+            res = refresh_grist_table.delay(config.id)
             self.message_user(
                 request,
-                f"Configuration {config}: une tâche de création a été lancée (task ID: {res.id}).",
+                f"Configuration {config}: une tâche de mise à jour a été lancée "
+                f"(task ID: {res.id}).",
                 messages.SUCCESS,
             )
-            return
 
-        if not check_table_columns_consistency(config):
-            self.message_user(
-                request,
-                f"Configuration {config}: les colonnes ne sont pas cohérentes. "
-                f"Impossible de mettre à jour la table {config.table_id}.",
-                messages.ERROR,
-            )
-            return
-
-        res = refresh_grist_table.delay(config.id)
-        self.message_user(
-            request,
-            f"Configuration {config}: une tâche de mise à jour a été lancée (task ID: {res.id}).",
-            messages.SUCCESS,
-        )
-
-    @admin.action(description="Recréer les colonnes pour les configurations sélectionnées")
+    @admin.action(description="Recréer les colonnes en base de données")
     def reset_columns(self, request: HttpRequest, queryset: QuerySet[GristConfig]):
         for config in queryset:
+            if not self._check_config_is_enabled(request, config):
+                continue
+
             GristConnector().update_or_create_columns(config=config)
             self.message_user(
                 request,
-                f"Configuration {config.id}: reset columns.",
+                f"Configuration {config.name}: les colonnes ont été re-créées.",
                 messages.SUCCESS,
             )
+
+    @admin.action(description="Synchroniser les colonnes Grist")
+    def sync_columns(self, request: HttpRequest, queryset: QuerySet[GristConfig]):
+        for config in queryset:
+            if not self._check_config_is_enabled(request, config):
+                continue
+
+            if check_table_columns_consistency(config):
+                continue
+
+            grist_client: GristApiClient = GristApiClient.from_config(config)
+
+            remote_table_columns = grist_client.get_table_columns(table_id=config.table_id)
+            indexed_remote_table_columns = {col["id"]: col for col in remote_table_columns}
+
+            for column in config.table_columns:
+                col_id = column["id"]
+                remote_column = indexed_remote_table_columns.get(col_id)
+
+                # find out all columns that are in the config but not in Grist
+                if not remote_column:
+                    self.message_user(
+                        request,
+                        f"Configuration {config.name}: création de la colonne '{col_id}'.",
+                        messages.SUCCESS,
+                    )
+                    grist_client.create_table_columns(
+                        table_id=config.table_id,
+                        columns=[
+                            {
+                                "id": col_id,
+                                "fields": {
+                                    "label": column["fields"]["label"],
+                                    "type": column["fields"]["type"],
+                                },
+                            }
+                        ],
+                    )
+                    continue
+
+                # find out all columns that are in both sides but with diffs
+                if (
+                    remote_column["fields"]["label"] != column["fields"]["label"]
+                    or remote_column["fields"]["type"] != column["fields"]["type"]
+                ):
+                    self.message_user(
+                        request,
+                        f"Action sur la configuration {config.name}: mettre à jour manuellement "
+                        f"la colonne '{col_id}' (label: {remote_column['fields']['label']} "
+                        f", type: {remote_column['fields']['type']}).",
+                        messages.WARNING,
+                    )
+
+                    # FIXME: fail at the moment, col ID is changed for some reason
+                    # self.message_user(
+                    #     request,
+                    #     f"Configuration {config.name}: mise à jour de la colonne '{col_id}'.",
+                    #     messages.SUCCESS,
+                    # )
+                    # grist_client.update_table_columns(
+                    #     table_id=config.table_id,
+                    #     columns=[
+                    #         {
+                    #             "id": col_id,
+                    #             "fields": {
+                    #                 "label": column["fields"]["label"],
+                    #                 "type": column["fields"]["type"],
+                    #             },
+                    #         }
+                    #     ],
+                    # )
+                    continue
+
+                # find out all columns that are in Grist but not in the config
+                config_columns_ids = [col["id"] for col in config.table_columns]
+                for remote_col_id in indexed_remote_table_columns:
+                    if remote_col_id not in config_columns_ids:
+                        self.message_user(
+                            request,
+                            f"Action sur la configuration {config.name}: colonne '{remote_col_id}' "
+                            "présente uniquement côté Grist.",
+                            messages.WARNING,
+                        )
