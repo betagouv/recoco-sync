@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from django.contrib import admin
 
-from .models import ProjetLesCommuns
+from .models import LesCommunsProjet
 
 
-@admin.register(ProjetLesCommuns)
+@admin.register(LesCommunsProjet)
 class ProjetLesCommunsAdmin(admin.ModelAdmin):
     list_display = (
         "id",
