@@ -58,11 +58,11 @@ class GristConfigAdmin(admin.ModelAdmin):
 
     list_filter = ("enabled",)
 
-    actions = (
-        "setup_grist_table",
+    actions = [
         "reset_columns",
         "sync_columns",
-    )
+        "setup_grist_table",
+    ]
 
     inlines = (GristConfigColumnInline,)
 
@@ -111,7 +111,7 @@ class GristConfigAdmin(admin.ModelAdmin):
             config_table_columns, key=lambda x: x["id"]
         )
 
-    @admin.action(description="Créer ou mettre à jour la table Grist")
+    @admin.action(description="Mettre à jour la table Grist")
     def setup_grist_table(self, request: HttpRequest, queryset: QuerySet[GristConfig]):
         for config in queryset:
             if not self._check_config_is_enabled(request, config):
@@ -158,7 +158,7 @@ class GristConfigAdmin(admin.ModelAdmin):
                 messages.SUCCESS,
             )
 
-    @admin.action(description="Synchroniser les colonnes Grist")
+    @admin.action(description="Synchroniser les colonnes de la table Grist")
     def sync_columns(self, request: HttpRequest, queryset: QuerySet[GristConfig]):
         for config in queryset:
             if not self._check_config_is_enabled(request, config):
@@ -213,6 +213,7 @@ class GristConfigAdmin(admin.ModelAdmin):
                                 "fields": {
                                     "label": column["fields"]["label"],
                                     "type": column["fields"]["type"],
+                                    "colId": col_id,
                                 },
                             }
                         ],

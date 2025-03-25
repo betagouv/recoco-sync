@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from httpx import HTTPError
 
 from .clients import GristApiClient
 from .connectors import GristConnector
@@ -49,6 +50,11 @@ def refresh_grist_table(config_id: str):
 
     grist_connector = GristConnector()
     for project_id, project_data in grist_connector.fetch_projects_data(config=config):
-        grist_connector.update_or_create_project_record(
-            config=config, project_id=project_id, project_data=project_data
-        )
+        try:
+            grist_connector.update_or_create_project_record(
+                config=config, project_id=project_id, project_data=project_data
+            )
+        except HTTPError:
+            logger.error(
+                f"Grist: failed to update or create project {project_id} with data {project_data}"
+            )
