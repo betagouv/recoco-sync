@@ -26,7 +26,7 @@ class GristConnector(Connector):
             for _, project_data in self.fetch_projects_data(
                 project_ids=[project_id], config=config
             ):
-                update_or_create_project_record(
+                self.update_or_create_project_record(
                     config=config, project_id=project_id, project_data=project_data
                 )
 
@@ -96,30 +96,31 @@ class GristConnector(Connector):
             col_label = f"{col_label[: settings.TABLE_COLUMN_HEADER_MAX_LENGTH - 3]}..."
         return col_label
 
+    def update_or_create_project_record(
+        self, config: GristConfig, project_id: int, project_data: dict
+    ):
+        """
+        Update a record related to a givent project, in a Grist table,
+        or create it if it doesn't exist.
+        """
 
-def update_or_create_project_record(config: GristConfig, project_id: int, project_data: dict):
-    """
-    Update a record related to a givent project, in a Grist table,
-    or create it if it doesn't exist.
-    """
+        client = GristApiClient.from_config(config)
 
-    client = GristApiClient.from_config(config)
-
-    resp = client.get_records(
-        table_id=config.table_id,
-        filter={"object_id": [project_id]},
-    )
-
-    if len(records := resp["records"]):
-        client.update_records(
+        resp = client.get_records(
             table_id=config.table_id,
-            records={
-                records[0]["id"]: project_data,
-            },
+            filter={"object_id": [project_id]},
         )
-        return
 
-    client.create_records(
-        table_id=config.table_id,
-        records=[{"object_id": project_id} | project_data],
-    )
+        if len(records := resp["records"]):
+            client.update_records(
+                table_id=config.table_id,
+                records={
+                    records[0]["id"]: project_data,
+                },
+            )
+            return
+
+        client.create_records(
+            table_id=config.table_id,
+            records=[{"object_id": project_id} | project_data],
+        )

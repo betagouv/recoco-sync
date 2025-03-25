@@ -4,7 +4,7 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 
 from .clients import GristApiClient
-from .connectors import GristConnector, update_or_create_project_record
+from .connectors import GristConnector
 from .models import GristConfig
 
 logger = get_task_logger(__name__)
@@ -47,7 +47,8 @@ def refresh_grist_table(config_id: str):
         logger.error(f"GristConfig with id={config_id} does not exist")
         return
 
-    for project_id, project_data in GristConnector().fetch_projects_data(config=config):
-        update_or_create_project_record(
+    grist_connector = GristConnector()
+    for project_id, project_data in grist_connector.fetch_projects_data(config=config):
+        grist_connector.update_or_create_project_record(
             config=config, project_id=project_id, project_data=project_data
         )
