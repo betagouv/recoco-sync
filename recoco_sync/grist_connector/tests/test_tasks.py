@@ -28,7 +28,7 @@ class TestRefreshGristTable:
             "GristConfig with id=40d26f87-8b91-4670-a196-bfdcbc39eabb does not exist"
         )
 
-    @patch("recoco_sync.grist_connector.tasks.update_or_create_project_record")
+    @patch("recoco_sync.grist_connector.connectors.GristConnector.update_or_create_project_record")
     @patch("recoco_sync.grist_connector.connectors.GristConnector.fetch_projects_data")
     def test_update_or_create_project_record_call(
         self,
