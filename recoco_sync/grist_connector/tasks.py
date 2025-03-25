@@ -48,13 +48,22 @@ def refresh_grist_table(config_id: str):
         logger.error(f"GristConfig with id={config_id} does not exist")
         return
 
+    errors = []
     grist_connector = GristConnector()
+
     for project_id, project_data in grist_connector.fetch_projects_data(config=config):
         try:
             grist_connector.update_or_create_project_record(
                 config=config, project_id=project_id, project_data=project_data
             )
-        except HTTPError:
-            logger.error(
-                f"Grist: failed to update or create project {project_id} with data {project_data}"
+        except HTTPError as err:
+            errors.append(
+                {
+                    "project_id": project_id,
+                    "error": str(err),
+                }
             )
+            break
+
+    if errors:
+        logger.error(f"Grist - failed to update or create some projects: {errors}.")
