@@ -25,11 +25,11 @@ project_columns_spec = {
     },
     "postal_code": {
         "label": "Code postal",
-        "type": GristColumnType.INTEGER,
+        "type": GristColumnType.TEXT,
     },
     "insee": {
         "label": "Code Insee",
-        "type": GristColumnType.INTEGER,
+        "type": GristColumnType.TEXT,
     },
     "department": {
         "label": "Département",
@@ -37,7 +37,7 @@ project_columns_spec = {
     },
     "department_code": {
         "label": "Code département",
-        "type": GristColumnType.INTEGER,
+        "type": GristColumnType.TEXT,
     },
     "location": {
         "label": "Lieu",

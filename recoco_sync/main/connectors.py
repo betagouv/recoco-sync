@@ -69,13 +69,13 @@ class Connector(metaclass=ABCMeta):
                 data.update(
                     {
                         "city": commune["name"],
-                        "postal_code": int(commune["postal"]),
-                        "insee": int(commune["insee"]),
+                        "postal_code": commune["postal"],
+                        "insee": commune["insee"],
                         "department": commune["department"]["name"],
-                        "department_code": int(commune["department"]["code"]),
+                        "department_code": commune["department"]["code"],
                     }
                 )
-            except (KeyError, ValueError) as exc:
+            except KeyError as exc:
                 logger.error(f"Error while mapping commune of project #{payload['id']}: {exc}")
 
         data["tags"] = ",".join(payload.get("tags", []))
