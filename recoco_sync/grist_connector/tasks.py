@@ -66,4 +66,4 @@ def refresh_grist_table(config_id: str):
             break
 
     if errors:
-        logger.error(f"Grist - failed to update or create some projects: {errors}.")
+        logger.error(f"Grist {config.name}, update failures: {errors}.")
