@@ -123,29 +123,3 @@ def update_or_create_project_record(config: GristConfig, project_id: int, projec
         table_id=config.table_id,
         records=[{"object_id": project_id} | project_data],
     )
-
-
-def grist_table_exists(config: GristConfig) -> bool:
-    """Check if a table exists in Grist."""
-
-    return GristApiClient.from_config(config).table_exists(table_id=config.table_id)
-
-
-def check_table_columns_consistency(config: GristConfig) -> bool:
-    """Check the columns of a table in Grist are consistent with the config."""
-
-    config_table_columns = config.table_columns
-    config_table_columns_keys = [t["id"] for t in config_table_columns]
-
-    remote_table_columns = GristApiClient.from_config(config).get_table_columns(
-        table_id=config.table_id
-    )
-    remote_table_columns = [
-        {"id": t["id"], "fields": {k: t["fields"][k] for k in ("label", "type")}}
-        for t in remote_table_columns
-        if t["id"] in config_table_columns_keys
-    ]
-
-    return sorted(remote_table_columns, key=lambda x: x["id"]) == sorted(
-        config_table_columns, key=lambda x: x["id"]
-    )

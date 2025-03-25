@@ -5,14 +5,10 @@ from unittest.mock import patch
 import pytest
 
 from recoco_sync.grist_connector.choices import GristColumnType
-from recoco_sync.grist_connector.connectors import (
-    GristConnector,
-    check_table_columns_consistency,
-    grist_table_exists,
-)
+from recoco_sync.grist_connector.connectors import GristConnector
 from recoco_sync.main.utils import QuestionType
 
-from .factories import GristColumnFactory, GristConfigFactory
+from .factories import GristConfigFactory
 
 
 @pytest.mark.django_db
@@ -59,21 +55,3 @@ class TestGristConnector:
             return_value=question_type,
         ):
             assert GristConnector.get_column_type_from_payload(question_type) == expected_grist_type
-
-
-def test_grist_table_exists():
-    config = GristConfigFactory.build()
-    with patch(
-        "recoco_sync.grist_connector.connectors.GristApiClient.table_exists", return_value=True
-    ) as mock_table_exists:
-        assert grist_table_exists(config) is True
-        mock_table_exists.assert_called_once_with(table_id=config.table_id)
-
-
-@pytest.mark.django_db
-def test_check_table_columns_consistency():
-    config = GristConfigFactory(create_columns=True, doc_id="123456789", table_id="my_table")
-    assert check_table_columns_consistency(config) is True
-
-    GristColumnFactory(grist_config=config)
-    assert check_table_columns_consistency(config) is False

@@ -7,15 +7,8 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from .clients import GristApiClient
-from .connectors import (
-    GristConnector,
-    check_table_columns_consistency,
-    grist_table_exists,
-)
-from .models import (
-    GristColumn,
-    GristConfig,
-)
+from .connectors import GristConnector
+from .models import GristColumn, GristConfig
 from .tasks import populate_grist_table, refresh_grist_table
 
 
@@ -97,13 +90,34 @@ class GristConfigAdmin(admin.ModelAdmin):
             return False
         return True
 
+    def _grist_table_exists(self, config: GristConfig) -> bool:
+        return GristApiClient.from_config(config).table_exists(table_id=config.table_id)
+
+    @staticmethod
+    def _check_table_columns_consistency(config: GristConfig) -> bool:
+        config_table_columns = config.table_columns
+        config_table_columns_keys = [t["id"] for t in config_table_columns]
+
+        remote_table_columns = GristApiClient.from_config(config).get_table_columns(
+            table_id=config.table_id
+        )
+        remote_table_columns = [
+            {"id": t["id"], "fields": {k: t["fields"][k] for k in ("label", "type")}}
+            for t in remote_table_columns
+            if t["id"] in config_table_columns_keys
+        ]
+
+        return sorted(remote_table_columns, key=lambda x: x["id"]) == sorted(
+            config_table_columns, key=lambda x: x["id"]
+        )
+
     @admin.action(description="Créer ou mettre à jour la table Grist")
     def setup_grist_table(self, request: HttpRequest, queryset: QuerySet[GristConfig]):
         for config in queryset:
             if not self._check_config_is_enabled(request, config):
                 continue
 
-            table_exists = grist_table_exists(config)
+            table_exists = self._grist_table_exists(config)
             if not table_exists:
                 res = populate_grist_table.delay(config.id)
                 self.message_user(
@@ -114,7 +128,7 @@ class GristConfigAdmin(admin.ModelAdmin):
                 )
                 continue
 
-            if not check_table_columns_consistency(config):
+            if not self._check_table_columns_consistency(config):
                 self.message_user(
                     request,
                     f"Configuration {config}: les colonnes ne sont pas synchronisées."
