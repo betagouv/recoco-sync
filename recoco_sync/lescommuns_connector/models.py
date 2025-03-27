@@ -12,7 +12,7 @@ class LesCommunsConfig(BaseModel):
     webhook_config = models.ForeignKey(
         WebhookConfig,
         on_delete=models.CASCADE,
-        related_name="les_communs_configs",
+        related_name="lescommuns_configs",
     )
 
     enabled = models.BooleanField(default=True)
@@ -28,7 +28,7 @@ class LesCommunsConfig(BaseModel):
 
 
 class LesCommunsProjet(BaseModel):
-    les_communs_id = models.CharField(max_length=100)
+    lescommuns_id = models.CharField(max_length=100)
     recoco_id = models.IntegerField()
 
     config = models.ForeignKey(LesCommunsConfig, on_delete=models.CASCADE)
@@ -38,4 +38,4 @@ class LesCommunsProjet(BaseModel):
         verbose_name_plural = "Projets LesCommuns"
         db_table = "lescommunsprojet"
         ordering = ("-created",)
-        unique_together = ("config", "les_communs_id", "recoco_id")
+        unique_together = ("config", "lescommuns_id", "recoco_id")

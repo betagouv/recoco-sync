@@ -22,7 +22,7 @@ class LesCommunsConfigAdmin(admin.ModelAdmin):
 class ProjetLesCommunsAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "les_communs_id",
+        "lescommuns_id",
         "recoco_id",
         "created",
     )
