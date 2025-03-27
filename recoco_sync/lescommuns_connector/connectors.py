@@ -58,7 +58,7 @@ class LesCommunsConnector(Connector):
             "DONE": "Terminé",
             "STUCK": "Bloqué",
             "REJECTED": "Abandonné",
-        }.get(payload.get("status"), "IDEE")
+        }.get(payload.get("status"), "En cours")
 
         data["dateDebutPrevisionnelle"] = datetime.fromisoformat(
             payload.get("created_on")
@@ -95,12 +95,12 @@ class LesCommunsConnector(Connector):
         project = LesCommunsProjet.objects.filter(recoco_id=project_id, config=config).first()
 
         if project:
-            client.update_project(project_data)
+            client.update_project(project_id=project.lescommuns_id, payload=project_data)
             project.touch()
             project.save()
             return
 
-        response = client.create_project(project_data)
+        response = client.create_project(payload=project_data)
         LesCommunsProjet.objects.create(
             recoco_id=project_id,
             lescommuns_id=response["id"],
