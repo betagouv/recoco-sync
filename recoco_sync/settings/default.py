@@ -54,7 +54,7 @@ INSTALLED_APPS = (
     + [
         "recoco_sync.main",
         "recoco_sync.grist_connector",
-        "recoco_sync.les_communs_connector",
+        "recoco_sync.lescommuns_connector",
     ]
 )
 
@@ -156,7 +156,7 @@ TABLE_COLUMN_HEADER_MAX_LENGTH = env.str("TABLE_COLUMN_HEADER_MAX_LENGTH", defau
 #
 # LesCommuns
 #
-LES_COMMUNS_API_URL = env.str("LES_COMMUNS_API_URL")
-LES_COMMUNS_API_USERNAME = env.str("LES_COMMUNS_API_USERNAME")
-LES_COMMUNS_API_PASSWORD = env.str("LES_COMMUNS_API_PASSWORD")
-LES_COMMUNS_API_KEY = env.str("LES_COMMUNS_API_KEY")
+LESCOMMUNS_API_URL = env.str("LESCOMMUNS_API_URL")
+LESCOMMUNS_API_USERNAME = env.str("LESCOMMUNS_API_USERNAME")
+LESCOMMUNS_API_PASSWORD = env.str("LESCOMMUNS_API_PASSWORD")
+LESCOMMUNS_API_KEY = env.str("LESCOMMUNS_API_KEY")

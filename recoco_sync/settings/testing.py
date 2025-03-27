@@ -10,9 +10,10 @@ for k, v in {
     "RECOCO_API_USERNAME": "",
     "RECOCO_API_PASSWORD": "",
     "WEBHOOK_SECRET": "youshallnotpass",
-    "LES_COMMUNS_API_URL": "https://les-communs-transition-ecologique-api-staging.osc-fr1.scalingo.io/api",
-    "LES_COMMUNS_API_USERNAME": "",
-    "LES_COMMUNS_API_PASSWORD": "",
+    "LESCOMMUNS_API_URL": "https://les-communs-transition-ecologique-api-staging.osc-fr1.scalingo.io/api",
+    "LESCOMMUNS_API_USERNAME": "",
+    "LESCOMMUNS_API_PASSWORD": "",
+    "LESCOMMUNS_API_KEY": "",
 }.items():
     os.environ.setdefault(k, v)
 

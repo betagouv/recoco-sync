@@ -15,16 +15,16 @@ class LesCommunsApiClient:
 
     def __init__(self, *args, **kwargs):
         _auth = TokenBearerAuth(
-            base_url=settings.LES_COMMUNS_API_URL,
-            username=settings.LES_COMMUNS_API_USERNAME,
-            password=settings.LES_COMMUNS_API_PASSWORD,
+            base_url=settings.LESCOMMUNS_API_URL,
+            username=settings.LESCOMMUNS_API_USERNAME,
+            password=settings.LESCOMMUNS_API_PASSWORD,
         )
-        if settings.LES_COMMUNS_API_KEY:
-            _auth.access_token = settings.LES_COMMUNS_API_KEY
+        if settings.LESCOMMUNS_API_KEY:
+            _auth.access_token = settings.LESCOMMUNS_API_KEY
 
         self._client = Client(
             auth=_auth,
-            base_url=settings.LES_COMMUNS_API_URL,
+            base_url=settings.LESCOMMUNS_API_URL,
             event_hooks={"response": [raise_on_4xx_5xx]},
         )
 
