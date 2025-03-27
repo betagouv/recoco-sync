@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from datetime import datetime
+from typing import Any
+
 from recoco_sync.main.connectors import Connector
 from recoco_sync.main.models import WebhookEvent
 
@@ -23,54 +26,61 @@ class LesCommunsConnector(Connector):
         config: LesCommunsConfig = kwargs.get("config")
         return super().get_recoco_api_client(api_url=config.webhook_config.api_url)
 
-    def map_from_project_payload_object(self, payload, **kwargs):
+    def map_from_project_payload_object(self, payload: dict[str, Any], **kwargs) -> dict[str, Any]:
         # Doc: https://les-communs-transition-ecologique-api-staging.osc-fr1.scalingo.io/api#/Projets/ProjetsController_create
 
         data = {
             "nom": payload.get("name"),
             "description": payload.get("description"),
-            "porteur": {
-                "codeSiret": None,
-                "referentEmail": None,
-                "referentTelephone": None,
-                "referentPrenom": None,
-                "referentNom": None,
-                "referentFonction": None,
-            },
-            "budgetPrevisionnel": 0,
-            "dateDebutPrevisionnelle": None,
-            "status": None,
-            "programme": None,
             "collectivites": [],
             "competences": [],
             "leviers": [],
             "externalId": str(payload.get("id")),
         }
 
-        data["status"] = {
-            "DRAFT": "IDEE",
-            "TO_PROCESS": "IDEE",
-            "READY": "IDEE",
-            "IN_PROGRESS": "EN_COURS",
-            "DONE": "TERMINE",
-            "STUCK": "ABANDONNE",
-            "REJECTED": "ABANDONNE",
+        # Idée, Etude, Opération
+        data["phase"] = {
+            "DRAFT": "Idée",
+            "TO_PROCESS": "Idée",
+            "READY": "Idée",
+            "IN_PROGRESS": "Idée",
+            "DONE": "Idée",
+            "STUCK": "Idée",
+            "REJECTED": "Idée",
+        }.get(payload.get("status"), "Idée")
+
+        # En cours, En retard, En pause, Bloqué, Abandonné, Terminé
+        data["phaseStatut"] = {
+            "DRAFT": "En cours",
+            "TO_PROCESS": "En cours",
+            "READY": "En cours",
+            "IN_PROGRESS": "En cours",
+            "DONE": "Terminé",
+            "STUCK": "Bloqué",
+            "REJECTED": "Abandonné",
         }.get(payload.get("status"), "IDEE")
+
+        data["dateDebutPrevisionnelle"] = datetime.fromisoformat(
+            payload.get("created_on")
+        ).strftime("%Y-%m-%d")
 
         if commune := payload.get("commune"):
             data["collectivites"].append({"type": "Commune", "code": commune["postal"]})
 
         if len(switchtenders := payload.get("switchtenders")):
             porteur = switchtenders[0]
-            data["porteur"].update(
-                {
-                    "referentEmail": porteur.get("email"),
-                    "referentPrenom": porteur.get("firstname"),
-                    "referentNom": porteur.get("lastname"),
-                }
-            )
+            data["porteur"] = {
+                "referentEmail": porteur.get("email"),
+                "referentPrenom": porteur.get("firstname"),
+                "referentNom": porteur.get("lastname"),
+            }
 
         return data
+
+    def map_from_survey_answer_payload_object(
+        self, payload: dict[str, Any], **kwargs
+    ) -> dict[str, Any]:
+        return {}
 
     def update_or_create_project_record(
         self, config: LesCommunsConfig, project_id: int, project_data: dict

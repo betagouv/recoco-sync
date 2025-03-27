@@ -1,13 +1,23 @@
 from __future__ import annotations
 
+import logging
 from typing import Any, Self
 
 from django.conf import settings
-from httpx import Client
+from httpx import Client, Response
 
-from recoco_sync.main.clients import TokenBearerAuth, raise_on_4xx_5xx
+from recoco_sync.main.clients import TokenBearerAuth
 
 from .models import LesCommunsConfig
+
+logger = logging.getLogger("__name__")
+
+
+def raise_on_4xx_5xx(response: Response):
+    content = response.read()
+    if settings.ENVIRONMENT == "dev":
+        logger.error(f"Error {response.status_code}: {content}")
+    response.raise_for_status()
 
 
 class LesCommunsApiClient:
