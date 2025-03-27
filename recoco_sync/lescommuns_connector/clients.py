@@ -1,13 +1,21 @@
 from __future__ import annotations
 
-from typing import Any, Self
+import logging
+from typing import Any
 
 from django.conf import settings
-from httpx import Client
+from httpx import Client, Response
 
-from recoco_sync.main.clients import TokenBearerAuth, raise_on_4xx_5xx
+from recoco_sync.main.clients import TokenBearerAuth
 
-from .models import LesCommunsConfig
+logger = logging.getLogger("__name__")
+
+
+def raise_on_4xx_5xx(response: Response):
+    content = response.read()
+    if response.status_code >= 400 and settings.ENVIRONMENT == "dev":
+        logger.error(f"Error {response.status_code}: {content}")
+    response.raise_for_status()
 
 
 class LesCommunsApiClient:
@@ -15,23 +23,17 @@ class LesCommunsApiClient:
 
     def __init__(self, *args, **kwargs):
         _auth = TokenBearerAuth(
-            base_url=settings.LES_COMMUNS_API_URL,
-            username=settings.LES_COMMUNS_API_USERNAME,
-            password=settings.LES_COMMUNS_API_PASSWORD,
+            base_url=settings.LESCOMMUNS_API_URL,
+            username=settings.LESCOMMUNS_API_USERNAME,
+            password=settings.LESCOMMUNS_API_PASSWORD,
         )
-        if settings.LES_COMMUNS_API_KEY:
-            _auth.access_token = settings.LES_COMMUNS_API_KEY
+        if settings.LESCOMMUNS_API_KEY:
+            _auth.access_token = settings.LESCOMMUNS_API_KEY
 
         self._client = Client(
             auth=_auth,
-            base_url=settings.LES_COMMUNS_API_URL,
+            base_url=settings.LESCOMMUNS_API_URL,
             event_hooks={"response": [raise_on_4xx_5xx]},
-        )
-
-    @classmethod
-    def from_config(cls, config: LesCommunsConfig) -> Self:
-        return cls(
-            # ...
         )
 
     def list_projects(self) -> list[dict[str, Any]]:
