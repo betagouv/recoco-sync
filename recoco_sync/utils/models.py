@@ -15,3 +15,6 @@ class BaseModel(TimeStampedModel):
 
     class Meta:
         abstract = True
+
+    def touch(self):
+        self.save(update_fields=["modified"])

@@ -18,8 +18,8 @@ class LesCommunsConfig(BaseModel):
     enabled = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = "Configuration Les Communs"
-        verbose_name_plural = "Configurations Les Communs"
+        verbose_name = "Configuration LesCommuns"
+        verbose_name_plural = "Configurations LesCommuns"
         db_table = "lescommunsconfig"
         ordering = ("-created",)
         indexes = [
@@ -34,8 +34,8 @@ class LesCommunsProjet(BaseModel):
     config = models.ForeignKey(LesCommunsConfig, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = "Projet Les Communs"
-        verbose_name_plural = "Projets Les Communs"
+        verbose_name = "Projet LesCommuns"
+        verbose_name_plural = "Projets LesCommuns"
         db_table = "lescommunsprojet"
         ordering = ("-created",)
         unique_together = ("config", "les_communs_id", "recoco_id")
