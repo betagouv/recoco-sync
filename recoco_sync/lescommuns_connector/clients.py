@@ -15,7 +15,7 @@ logger = logging.getLogger("__name__")
 
 def raise_on_4xx_5xx(response: Response):
     content = response.read()
-    if settings.ENVIRONMENT == "dev":
+    if response.status_code >= 400 and settings.ENVIRONMENT == "dev":
         logger.error(f"Error {response.status_code}: {content}")
     response.raise_for_status()
 
