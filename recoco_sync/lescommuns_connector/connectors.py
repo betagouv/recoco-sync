@@ -65,7 +65,12 @@ class LesCommunsConnector(Connector):
         ).strftime("%Y-%m-%d")
 
         if commune := payload.get("commune"):
-            data["collectivites"].append({"type": "Commune", "code": commune["postal"]})
+            data["collectivites"].append(
+                {
+                    "type": "Commune",
+                    "code": commune["insee"],
+                }
+            )
 
         if len(switchtenders := payload.get("switchtenders")):
             porteur = switchtenders[0]
