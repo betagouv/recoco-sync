@@ -95,17 +95,17 @@ class LesCommunsConnector(Connector):
         or create it if it doesn't exist.
         """
 
-        client = LesCommunsApiClient.from_config(config)
-
         project = LesCommunsProjet.objects.filter(recoco_id=project_id, config=config).first()
 
         if project:
-            client.update_project(project_id=project.lescommuns_id, payload=project_data)
+            LesCommunsApiClient().update_project(
+                project_id=project.lescommuns_id, payload=project_data
+            )
             project.touch()
             project.save()
             return
 
-        response = client.create_project(payload=project_data)
+        response = LesCommunsApiClient().create_project(payload=project_data)
         LesCommunsProjet.objects.create(
             recoco_id=project_id,
             lescommuns_id=response["id"],

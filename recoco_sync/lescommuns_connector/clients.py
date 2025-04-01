@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Self
+from typing import Any
 
 from django.conf import settings
 from httpx import Client, Response
 
 from recoco_sync.main.clients import TokenBearerAuth
-
-from .models import LesCommunsConfig
 
 logger = logging.getLogger("__name__")
 
@@ -36,12 +34,6 @@ class LesCommunsApiClient:
             auth=_auth,
             base_url=settings.LESCOMMUNS_API_URL,
             event_hooks={"response": [raise_on_4xx_5xx]},
-        )
-
-    @classmethod
-    def from_config(cls, config: LesCommunsConfig) -> Self:
-        return cls(
-            # ...
         )
 
     def list_projects(self) -> list[dict[str, Any]]:
