@@ -60,7 +60,7 @@ def refresh_grist_table(config_id: str):
             errors.append(
                 {
                     "project_id": project_id,
-                    "error": str(err),
+                    "error": err.response.content,
                 }
             )
             break

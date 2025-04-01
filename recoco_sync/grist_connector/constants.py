@@ -63,4 +63,12 @@ project_columns_spec = {
         "label": "Modifié le",
         "type": GristColumnType.DATETIME,
     },
+    "inactive_since": {
+        "label": "Inactif depuis le",
+        "type": GristColumnType.DATETIME,
+    },
+    "active": {
+        "label": "Actif",
+        "type": GristColumnType.BOOL,
+    },
 }

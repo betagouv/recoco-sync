@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def raise_on_4xx_5xx(response: Response):
+    response.read()
     response.raise_for_status()
 
 
