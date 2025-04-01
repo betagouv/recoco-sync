@@ -61,6 +61,9 @@ class Connector(metaclass=ABCMeta):
             "org_name": "organization",
             "created_on": "created",
             "updated_on": "modified",
+            "latitude": "latitude",
+            "longitude": "longitude",
+            "inactive_since": "inactive_since",
         }.items():
             data[dst] = payload.get(src, "")
 
@@ -79,6 +82,8 @@ class Connector(metaclass=ABCMeta):
                 logger.error(f"Error while mapping commune of project #{payload['id']}: {exc}")
 
         data["tags"] = ",".join(payload.get("tags", []))
+
+        data["active"] = payload.get("inactive_since") is None
 
         return data
 
