@@ -10,7 +10,8 @@ class ConnectorStub(Connector):
 
 class TestConnector:
     def test_map_from_project_payload_object(self, project_payload_object):
-        assert ConnectorStub().map_from_project_payload_object(payload=project_payload_object) == {
+        data = ConnectorStub().map_from_project_payload_object(payload=project_payload_object)
+        assert data == {
             "name": "Pôle Santé",
             "description": "Le projet consiste à créer un pôle santé",
             "city": "MONNIERES",
@@ -19,11 +20,15 @@ class TestConnector:
             "department": "Loire-Atlantique",
             "department_code": "44",
             "location": "rue des hirondelles",
+            "latitude": 47.1202035218,
+            "longitude": -1.34924956417,
             "tags": "tag1,tag2",
             "organization": "Commune de Bayonne",
             "created": "2023-10-10T09:50:32.182591+02:00",
             "modified": "2024-05-24T10:54:21.653995+02:00",
-        }
+            "inactive_since": None,
+            "active": True,
+        }, data
 
     def test_map_survey_answer_payload_object(self, survey_answer_payload_object):
         assert ConnectorStub().map_from_survey_answer_payload_object(

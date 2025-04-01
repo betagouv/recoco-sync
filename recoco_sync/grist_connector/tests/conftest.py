@@ -317,6 +317,20 @@ def grist_table_columns():
                     "type": "Numeric",
                 },
             },
+            {
+                "id": "inactive_since",
+                "fields": {
+                    "label": "Inactif depuis le",
+                    "type": "DateTime:Europe/Amsterdam",
+                },
+            },
+            {
+                "id": "active",
+                "fields": {
+                    "label": "Actif",
+                    "type": "Bool",
+                },
+            },
         ]
     }
 

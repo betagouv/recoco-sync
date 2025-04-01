@@ -126,6 +126,8 @@ def project_payload_object():
             "longitude": -1.34924956417,
         },
         "location": "rue des hirondelles",
+        "latitude": 47.1202035218,
+        "longitude": -1.34924956417,
         "recommendation_count": 0,
         "public_message_count": 0,
         "private_message_count": 0,
