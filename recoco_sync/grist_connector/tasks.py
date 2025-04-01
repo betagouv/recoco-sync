@@ -63,7 +63,6 @@ def refresh_grist_table(config_id: str):
                     "error": err.response.content,
                 }
             )
-            break
 
     if errors:
         logger.error(f"Grist {config.name}, update failures: {errors}.")
