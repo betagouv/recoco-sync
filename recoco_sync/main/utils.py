@@ -5,7 +5,7 @@ from typing import Any
 
 
 class QuestionType(Enum):
-    SIMPLE = "regular"
+    SIMPLE = "simple"
     YES_NO = "yes_no"
     YES_NO_MAYBE = "yes_no_maybe"
     CHOICES = "choices"
