@@ -49,10 +49,10 @@ class TestGristConnector:
     @pytest.mark.parametrize(
         "question_type,expected_grist_type",
         [
-            (QuestionType.REGULAR, GristColumnType.TEXT),
+            (QuestionType.SIMPLE, GristColumnType.TEXT),
             (QuestionType.YES_NO, GristColumnType.BOOL),
             (QuestionType.YES_NO_MAYBE, GristColumnType.TEXT),
-            (QuestionType.MULTIPLE, GristColumnType.CHOICE_LIST),
+            (QuestionType.CHOICES, GristColumnType.CHOICE_LIST),
         ],
     )
     def test_get_column_type_from_payload(self, question_type, expected_grist_type):

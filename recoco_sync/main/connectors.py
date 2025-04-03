@@ -74,9 +74,8 @@ class Connector(metaclass=ABCMeta):
         comment = payload.get("comment", "")
 
         match get_question_type(question):
-            case QuestionType.MULTIPLE:
-                data[col_id] = ",".join([c["text"] for c in choices])
-                data[f"{col_id}_comment"] = comment
+            case QuestionType.SIMPLE:
+                data[col_id] = comment
 
             case QuestionType.YES_NO:
                 data[col_id] = (
@@ -84,8 +83,13 @@ class Connector(metaclass=ABCMeta):
                 )
                 data[f"{col_id}_comment"] = comment
 
-            case QuestionType.REGULAR | QuestionType.YES_NO_MAYBE:
-                data[col_id] = comment
+            case QuestionType.YES_NO_MAYBE:
+                data[col_id] = str(choices[0]["text"]).lower() if len(choices) > 0 else ""
+                data[f"{col_id}_comment"] = comment
+
+            case QuestionType.CHOICES | QuestionType.MULTIPLE_CHOICES:
+                data[col_id] = ",".join([c["text"] for c in choices])
+                data[f"{col_id}_comment"] = comment
 
         if attachment := payload.get("attachment"):
             data[f"{col_id}_attachment"] = attachment

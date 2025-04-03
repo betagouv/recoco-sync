@@ -28,7 +28,7 @@ from recoco_sync.main.utils import QuestionType, get_question_type
                     },
                 ],
             },
-            QuestionType.REGULAR,
+            QuestionType.SIMPLE,
         ),
         (
             {
@@ -80,7 +80,7 @@ from recoco_sync.main.utils import QuestionType, get_question_type
                     {"id": 249, "value": "4", "text": "Logement / Habitat"},
                 ],
             },
-            QuestionType.MULTIPLE,
+            QuestionType.CHOICES,
         ),
     ],
 )
