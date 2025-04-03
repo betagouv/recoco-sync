@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Self
 
 from django.conf import settings
 from httpx import Client, Response
 
 from recoco_sync.main.clients import TokenBearerAuth
+
+from .models import LesCommunsConfig
 
 logger = logging.getLogger("__name__")
 
@@ -21,20 +23,24 @@ def raise_on_4xx_5xx(response: Response):
 class LesCommunsApiClient:
     _client: Client
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, api_key: str | None = None, *args, **kwargs):
         _auth = TokenBearerAuth(
             base_url=settings.LESCOMMUNS_API_URL,
             username=settings.LESCOMMUNS_API_USERNAME,
             password=settings.LESCOMMUNS_API_PASSWORD,
         )
-        if settings.LESCOMMUNS_API_KEY:
-            _auth.access_token = settings.LESCOMMUNS_API_KEY
+        if api_key:
+            _auth.access_token = api_key
 
         self._client = Client(
             auth=_auth,
             base_url=settings.LESCOMMUNS_API_URL,
             event_hooks={"response": [raise_on_4xx_5xx]},
         )
+
+    @classmethod
+    def from_config(cls, config: LesCommunsConfig) -> Self:
+        return cls(api_key=config.api_key)
 
     def list_projects(self) -> list[dict[str, Any]]:
         response = self._client.get("/projets/")

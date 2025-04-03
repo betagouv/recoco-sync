@@ -12,17 +12,19 @@ from .factories import WebhookEventFactory
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "object_type, object_id, object_payload",
+    "object_id, object_type, object_payload, expected_object_id, expected_object_type",
     [
-        (ObjectType.PROJECT, 999, {"project": 999}),
-        (ObjectType.PROJECT, 999, {"project": 999}),
-        (ObjectType.SURVEY_ANSWER, 888, {"project": 999}),
+        (999, ObjectType.PROJECT, {"project": 999}, 999, ObjectType.PROJECT),
+        (888, ObjectType.SURVEY_ANSWER, {"project": 999}, 999, ObjectType.PROJECT),
+        # (ObjectType.RECOMMENDATION, 666, {}),
     ],
 )
-def test_task_triggered_and_event_saved(object_type, object_id, object_payload):
+def test_task_triggered_and_event_saved(
+    object_id, object_type, object_payload, expected_object_id, expected_object_type
+):
     event = WebhookEventFactory(
-        object_type=object_type,
         object_id=object_id,
+        object_type=object_type,
         payload={"object": object_payload},
     )
 
@@ -31,7 +33,9 @@ def test_task_triggered_and_event_saved(object_type, object_id, object_payload):
     with patch("recoco_sync.main.tasks.get_connectors", Mock(return_value=[fake_connector])):
         process_webhook_event(event_id=event.id)
 
-    fake_connector.on_project_event.assert_called_once_with(project_id=999, event=event)
+    fake_connector.on_webhook_event.assert_called_once_with(
+        object_id=expected_object_id, object_type=expected_object_type, event=event
+    )
 
     event.refresh_from_db()
     assert event.status == WebhookEventStatus.PROCESSED

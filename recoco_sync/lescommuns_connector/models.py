@@ -15,6 +15,8 @@ class LesCommunsConfig(BaseModel):
         related_name="lescommuns_configs",
     )
 
+    api_key = models.CharField(max_length=64)
+
     enabled = models.BooleanField(default=True)
 
     class Meta:
@@ -26,12 +28,17 @@ class LesCommunsConfig(BaseModel):
             models.Index(fields=["enabled"]),
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class LesCommunsProjet(BaseModel):
     lescommuns_id = models.CharField(max_length=100)
     recoco_id = models.IntegerField()
 
-    config = models.ForeignKey(LesCommunsConfig, on_delete=models.CASCADE)
+    config = models.ForeignKey(
+        LesCommunsConfig, on_delete=models.CASCADE, related_name="lescommuns_projects"
+    )
 
     class Meta:
         verbose_name = "Projet LesCommuns"
@@ -39,3 +46,20 @@ class LesCommunsProjet(BaseModel):
         db_table = "lescommunsprojet"
         ordering = ("-created",)
         unique_together = ("config", "lescommuns_id", "recoco_id")
+
+
+class LesCommunsProjectSelection(BaseModel):
+    recoco_id = models.IntegerField()
+
+    config = models.ForeignKey(
+        LesCommunsConfig,
+        on_delete=models.CASCADE,
+        related_name="lescommuns_project_selections",
+    )
+
+    class Meta:
+        verbose_name = "Sélection de projet pour LesCommuns"
+        verbose_name_plural = "Sélections de projet pour LesCommuns"
+        db_table = "lescommunsprojectselection"
+        ordering = ("-created",)
+        unique_together = ("config", "recoco_id")

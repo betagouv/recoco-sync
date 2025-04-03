@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import assert_never
-
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
@@ -20,16 +18,15 @@ def process_webhook_event(event_id: int):
         logger.error(f"WebhookEvent with id={event_id} does not exist")
         return
 
-    match event.object_type:
-        case ObjectType.PROJECT | ObjectType.TAGGEDITEM:
-            project_id = int(event.object_id)
-        case ObjectType.SURVEY_ANSWER:
-            project_id = int(event.object_data.get("project"))
-        case _:
-            assert_never(event.object_type)
+    object_id: int | None = int(event.object_id)
+    object_type: ObjectType | None = ObjectType(event.object_type)
+
+    if event.object_type in (ObjectType.SURVEY_ANSWER, ObjectType.TAGGEDITEM):
+        object_id = int(event.object_data.get("project"))
+        object_type = ObjectType.PROJECT
 
     for connector in get_connectors():
-        connector.on_project_event(project_id=project_id, event=event)
+        connector.on_webhook_event(object_id=object_id, object_type=object_type, event=event)
 
     event.status = WebhookEventStatus.PROCESSED
     event.save()

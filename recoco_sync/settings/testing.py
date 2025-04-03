@@ -13,7 +13,6 @@ for k, v in {
     "LESCOMMUNS_API_URL": "https://les-communs-transition-ecologique-api-staging.osc-fr1.scalingo.io/api",
     "LESCOMMUNS_API_USERNAME": "",
     "LESCOMMUNS_API_PASSWORD": "",
-    "LESCOMMUNS_API_KEY": "",
 }.items():
     os.environ.setdefault(k, v)
 

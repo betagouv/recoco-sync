@@ -6,6 +6,7 @@ from typing import Any, assert_never
 from django.conf import settings
 from django.db import transaction
 
+from recoco_sync.main.choices import ObjectType
 from recoco_sync.main.connectors import Connector
 from recoco_sync.main.models import WebhookEvent
 from recoco_sync.main.utils import QuestionType, get_question_type
@@ -19,15 +20,18 @@ logger = logging.getLogger(__name__)
 
 
 class GristConnector(Connector):
-    def on_project_event(self, project_id: int, event: WebhookEvent) -> None:
+    def on_webhook_event(
+        self, object_id: int, object_type: ObjectType, event: WebhookEvent
+    ) -> None:
+        if not object_type.is_project:
+            return
+
         for config in GristConfig.objects.filter(
             enabled=True, webhook_config_id=event.webhook_config.pk
         ):
-            for _, project_data in self.fetch_projects_data(
-                project_ids=[project_id], config=config
-            ):
+            for _, project_data in self.fetch_projects_data(project_ids=[object_id], config=config):
                 self.update_or_create_project_record(
-                    config=config, project_id=project_id, project_data=project_data
+                    config=config, project_id=object_id, project_data=project_data
                 )
 
     def get_recoco_api_client(self, **kwargs):
