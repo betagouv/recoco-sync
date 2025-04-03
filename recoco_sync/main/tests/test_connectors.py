@@ -23,7 +23,7 @@ class TestConnector:
             "latitude": 47.1202035218,
             "longitude": -1.34924956417,
             "tags": "tag1,tag2",
-            "organization": "Commune de Bayonne",
+            "organization": "Conseil des Jedi",
             "created": "2023-10-10T09:50:32.182591+02:00",
             "modified": "2024-05-24T10:54:21.653995+02:00",
             "inactive_since": None,
