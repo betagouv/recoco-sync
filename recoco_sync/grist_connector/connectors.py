@@ -76,12 +76,16 @@ class GristConnector(Connector):
     @staticmethod
     def get_column_type_from_payload(question: dict[str, Any]) -> GristColumnType:
         match get_question_type(question):
+            case QuestionType.SIMPLE:
+                return GristColumnType.TEXT
             case QuestionType.YES_NO:
                 return GristColumnType.BOOL
-            case QuestionType.MULTIPLE:
-                return GristColumnType.CHOICE_LIST
-            case QuestionType.REGULAR | QuestionType.YES_NO_MAYBE:
+            case QuestionType.YES_NO_MAYBE:
                 return GristColumnType.TEXT
+            case QuestionType.CHOICES:
+                return GristColumnType.TEXT
+            case QuestionType.MULTIPLE_CHOICES:
+                return GristColumnType.CHOICE_LIST
             case _:
                 assert_never(question)
 
