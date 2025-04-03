@@ -28,7 +28,7 @@ from recoco_sync.main.utils import QuestionType, get_question_type
                     },
                 ],
             },
-            QuestionType.SIMPLE,
+            QuestionType.CHOICES,
         ),
         (
             {
@@ -80,7 +80,18 @@ from recoco_sync.main.utils import QuestionType, get_question_type
                     {"id": 249, "value": "4", "text": "Logement / Habitat"},
                 ],
             },
-            QuestionType.CHOICES,
+            QuestionType.MULTIPLE_CHOICES,
+        ),
+        (
+            {
+                "id": 13,
+                "text": "Description succincte du site",
+                "text_short": "Description du site",
+                "slug": "description-du-site",
+                "is_multiple": False,
+                "choices": [],
+            },
+            QuestionType.SIMPLE,
         ),
     ],
 )
