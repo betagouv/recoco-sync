@@ -8,6 +8,7 @@ from recoco_sync.main.models import WebhookEvent
 
 from .clients import LesCommunsApiClient
 from .models import LesCommunsConfig, LesCommunsProjet
+from .schemas import Collectivite, Porteur, Projet
 
 
 class LesCommunsConnector(Connector):
@@ -29,17 +30,37 @@ class LesCommunsConnector(Connector):
     def map_from_project_payload_object(self, payload: dict[str, Any], **kwargs) -> dict[str, Any]:
         # Doc: https://les-communs-transition-ecologique-api-staging.osc-fr1.scalingo.io/api#/Projets/ProjetsController_create
 
-        data = {
-            "nom": payload.get("name"),
-            "description": payload.get("description"),
-            "collectivites": [],
-            "competences": [],
-            "leviers": [],
-            "externalId": str(payload.get("id")),
-        }
+        collectivites = []
+        if commune := payload.get("commune"):
+            collectivites.append(Collectivite(type="Commune", code=commune["insee"]))
 
-        # Idée, Etude, Opération
-        data["phase"] = {
+        porteur = None
+        if len(switchtenders := payload.get("switchtenders")):
+            porteur_data = switchtenders[0]
+            porteur = Porteur(
+                referentEmail=porteur_data.get("email"),
+                referentPrenom=porteur_data.get("firstname"),
+                referentNom=porteur_data.get("lastname"),
+            )
+
+        data = Projet(
+            nom=payload.get("name"),
+            description=payload.get("description"),
+            collectivites=collectivites,
+            externalId=str(payload.get("id")),
+            phase=self.phase_mapping(payload.get("status")),
+            phaseStatut=self.phase_statut_mapping(payload.get("status")),
+            dateDebutPrevisionnelle=datetime.fromisoformat(payload.get("created_on")).strftime(
+                "%Y-%m-%d"
+            ),
+            porteur=porteur,
+        )
+
+        return data.model_dump(by_alias=True)
+
+    @staticmethod
+    def phase_mapping(status: str) -> str:
+        return {
             "DRAFT": "Idée",
             "TO_PROCESS": "Idée",
             "READY": "Idée",
@@ -47,10 +68,11 @@ class LesCommunsConnector(Connector):
             "DONE": "Idée",
             "STUCK": "Idée",
             "REJECTED": "Idée",
-        }.get(payload.get("status"), "Idée")
+        }.get(status, "Idée")
 
-        # En cours, En retard, En pause, Bloqué, Abandonné, Terminé
-        data["phaseStatut"] = {
+    @staticmethod
+    def phase_statut_mapping(status: str) -> str:
+        return {
             "DRAFT": "En cours",
             "TO_PROCESS": "En cours",
             "READY": "En cours",
@@ -58,29 +80,7 @@ class LesCommunsConnector(Connector):
             "DONE": "Terminé",
             "STUCK": "Bloqué",
             "REJECTED": "Abandonné",
-        }.get(payload.get("status"), "En cours")
-
-        data["dateDebutPrevisionnelle"] = datetime.fromisoformat(
-            payload.get("created_on")
-        ).strftime("%Y-%m-%d")
-
-        if commune := payload.get("commune"):
-            data["collectivites"].append(
-                {
-                    "type": "Commune",
-                    "code": commune["insee"],
-                }
-            )
-
-        if len(switchtenders := payload.get("switchtenders")):
-            porteur = switchtenders[0]
-            data["porteur"] = {
-                "referentEmail": porteur.get("email"),
-                "referentPrenom": porteur.get("firstname"),
-                "referentNom": porteur.get("lastname"),
-            }
-
-        return data
+        }.get(status, "En cours")
 
     def map_from_survey_answer_payload_object(
         self, payload: dict[str, Any], **kwargs
