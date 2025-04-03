@@ -14,6 +14,7 @@ from recoco_sync.main.models import WebhookEvent
 from recoco_sync.main.utils import QuestionType, get_question_type
 
 from .clients import RecocoApiClient
+from .schemas import Project
 
 logger = logging.getLogger(__name__)
 
@@ -52,40 +53,8 @@ class Connector(metaclass=ABCMeta):
             yield project["id"], project_data
 
     def map_from_project_payload_object(self, payload: dict[str, Any], **kwargs) -> dict[str, Any]:
-        data = {}
-
-        for src, dst in {
-            "name": "name",
-            "description": "description",
-            "location": "location",
-            "org_name": "organization",
-            "created_on": "created",
-            "updated_on": "modified",
-            "latitude": "latitude",
-            "longitude": "longitude",
-            "inactive_since": "inactive_since",
-        }.items():
-            data[dst] = payload.get(src, "")
-
-        if commune := payload.get("commune"):
-            try:
-                data.update(
-                    {
-                        "city": commune["name"],
-                        "postal_code": commune["postal"],
-                        "insee": commune["insee"],
-                        "department": commune["department"]["name"],
-                        "department_code": commune["department"]["code"],
-                    }
-                )
-            except KeyError as exc:
-                logger.error(f"Error while mapping commune of project #{payload['id']}: {exc}")
-
-        data["tags"] = ",".join(payload.get("tags", []))
-
-        data["active"] = payload.get("inactive_since") is None
-
-        return data
+        data = Project(**payload)
+        return data.model_dump(by_alias=True)
 
     def map_from_survey_answer_payload_object(
         self, payload: dict[str, Any], **kwargs
