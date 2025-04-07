@@ -23,6 +23,7 @@ class Project(BaseModel):
     longitude: float | None
     org_name: str | None = Field(alias="organization")
     inactive_since: str | None
+    status: str
     commune_name: str | None = Field(
         validation_alias=AliasPath("commune", "name"),
         alias="city",

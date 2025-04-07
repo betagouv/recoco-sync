@@ -71,4 +71,8 @@ project_columns_spec = {
         "label": "Actif",
         "type": GristColumnType.BOOL,
     },
+    "status": {
+        "label": "Statut",
+        "type": GristColumnType.TEXT,
+    },
 }
