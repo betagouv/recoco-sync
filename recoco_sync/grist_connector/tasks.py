@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from httpx import HTTPError
@@ -28,16 +30,54 @@ def populate_grist_table(config_id: str):
 
     batch_records = []
     batch_size = 100
+    batch_errors = []
 
     for project_id, project_data in GristConnector().fetch_projects_data(config=config):
         batch_records.append({"object_id": project_id} | project_data)
 
         if len(batch_records) > batch_size - 1:
-            grist_client.create_records(table_id=config.table_id, records=batch_records)
+            batch_errors += _batch_create_records(
+                grist_client=grist_client,
+                table_id=config.table_id,
+                records=batch_records,
+            )
             batch_records = []
 
     if len(batch_records) > 0:
-        grist_client.create_records(table_id=config.table_id, records=batch_records)
+        batch_errors += _batch_create_records(
+            grist_client=grist_client,
+            table_id=config.table_id,
+            records=batch_records,
+        )
+
+    if len(batch_errors):
+        logger.error(f"Grist {config.name}, creation failures: {batch_errors}.")
+
+
+def _batch_create_records(
+    grist_client: GristApiClient, table_id: str, records: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    errors = []
+
+    try:
+        grist_client.create_records(table_id=table_id, records=records)
+    except HTTPError:
+        pass
+    else:
+        return errors
+
+    for record in records:
+        try:
+            grist_client.create_records(table_id=table_id, records=[record])
+        except HTTPError as err:
+            errors.append(
+                {
+                    "project_id": record.get("object_id"),
+                    "error": str(err),
+                }
+            )
+
+    return errors
 
 
 @shared_task
