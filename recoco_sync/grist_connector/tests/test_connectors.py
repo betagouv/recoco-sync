@@ -35,6 +35,7 @@ class TestGristConnector:
             "modified": "2024-05-24T10:54:21.653995+02:00",
             "inactive_since": None,
             "active": True,
+            "status": "IN_PROGRESS",
         }, data
 
     def test_map_from_survey_answer_payload_object(self, survey_answer_payload_object):

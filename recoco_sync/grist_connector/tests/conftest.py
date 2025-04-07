@@ -331,6 +331,13 @@ def grist_table_columns():
                     "type": "Bool",
                 },
             },
+            {
+                "id": "status",
+                "fields": {
+                    "label": "Statut",
+                    "type": "Text",
+                },
+            },
         ]
     }
 
