@@ -164,6 +164,14 @@ class GristConfigAdmin(admin.ModelAdmin):
             if not self._check_config_is_enabled(request, config):
                 continue
 
+            if not self._grist_table_exists(config):
+                self.message_user(
+                    request,
+                    f"Action sur la configuration {config.name}: la table grist n'existe pas.",
+                    messages.ERROR,
+                )
+                continue
+
             grist_client: GristApiClient = GristApiClient.from_config(config)
 
             indexed_remote_table_columns = {
