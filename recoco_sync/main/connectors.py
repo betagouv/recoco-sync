@@ -96,20 +96,6 @@ class Connector(metaclass=ABCMeta):
 
         return data
 
-    def fetch_questions_data(self, **kwargs) -> Generator[tuple[int, dict]]:
-        """Fetch data related to questions through the Recoco API."""
-
-        recoco_client = self.get_recoco_api_client(**kwargs)
-
-        questions = recoco_client.get_questions()
-
-        for question in questions.get("results", []):
-            question_data = self.map_from_question_payload_object(payload=question, **kwargs)
-            yield question["id"], question_data
-
-    def map_from_question_payload_object(self, payload: dict[str, Any], **kwargs) -> dict[str, Any]:
-        return payload
-
     @abstractmethod
     def on_project_event(self, project_id: int, event: WebhookEvent) -> None:
         pass

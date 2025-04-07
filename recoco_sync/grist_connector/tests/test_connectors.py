@@ -44,6 +44,7 @@ class TestGristConnector:
             config=GristConfigFactory(create_columns=True),
         ) == {
             "thematiques": "Commerce rural,Participation à la vie locale,Patrimoine",
+            "thematiques_comment": "Mon commentaire sur les thématiques",
         }
 
     @pytest.mark.parametrize(
