@@ -64,24 +64,41 @@ class GristConnector(Connector):
 
         questions = self.get_recoco_api_client(config=config).get_questions()
         for question in questions.get("results"):
+            question_col_id = question.get("slug").replace("-", "_")
+            question_col_label = self.get_column_label_from_payload(question)
+
             GristColumn.objects.get_or_create(
                 grist_config=config,
-                col_id=question.get("slug").replace("-", "_"),
+                col_id=question_col_id,
                 defaults={
-                    "label": self.get_column_label_from_payload(question),
+                    "label": question_col_label,
                     "type": self.get_column_type_from_payload(question),
                 },
             )
 
+            if get_question_type(question) != QuestionType.SIMPLE:
+                GristColumn.objects.get_or_create(
+                    grist_config=config,
+                    col_id=f"{question_col_id}_comment",
+                    defaults={
+                        "label": f"Commentaire de {question_col_label}",
+                        "type": GristColumnType.TEXT,
+                    },
+                )
+
     @staticmethod
     def get_column_type_from_payload(question: dict[str, Any]) -> GristColumnType:
         match get_question_type(question):
+            case QuestionType.SIMPLE:
+                return GristColumnType.TEXT
             case QuestionType.YES_NO:
                 return GristColumnType.BOOL
-            case QuestionType.MULTIPLE:
-                return GristColumnType.CHOICE_LIST
-            case QuestionType.REGULAR | QuestionType.YES_NO_MAYBE:
+            case QuestionType.YES_NO_MAYBE:
                 return GristColumnType.TEXT
+            case QuestionType.CHOICES:
+                return GristColumnType.TEXT
+            case QuestionType.MULTIPLE_CHOICES:
+                return GristColumnType.CHOICE_LIST
             case _:
                 assert_never(question)
 

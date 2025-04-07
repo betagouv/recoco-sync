@@ -44,15 +44,17 @@ class TestGristConnector:
             config=GristConfigFactory(create_columns=True),
         ) == {
             "thematiques": "Commerce rural,Participation à la vie locale,Patrimoine",
+            "thematiques_comment": "Mon commentaire sur les thématiques",
         }
 
     @pytest.mark.parametrize(
         "question_type,expected_grist_type",
         [
-            (QuestionType.REGULAR, GristColumnType.TEXT),
+            (QuestionType.SIMPLE, GristColumnType.TEXT),
             (QuestionType.YES_NO, GristColumnType.BOOL),
             (QuestionType.YES_NO_MAYBE, GristColumnType.TEXT),
-            (QuestionType.MULTIPLE, GristColumnType.CHOICE_LIST),
+            (QuestionType.CHOICES, GristColumnType.TEXT),
+            (QuestionType.MULTIPLE_CHOICES, GristColumnType.CHOICE_LIST),
         ],
     )
     def test_get_column_type_from_payload(self, question_type, expected_grist_type):

@@ -107,9 +107,10 @@ class GristConfigAdmin(admin.ModelAdmin):
             if t["id"] in config_table_columns_keys
         ]
 
-        return sorted(remote_table_columns, key=lambda x: x["id"]) == sorted(
-            config_table_columns, key=lambda x: x["id"]
-        )
+        sorted_remote_table_columns = sorted(remote_table_columns, key=lambda x: x["id"])
+        sorted_config_table_columns = sorted(config_table_columns, key=lambda x: x["id"])
+
+        return sorted_remote_table_columns == sorted_config_table_columns
 
     @admin.action(description="Mettre à jour la table Grist")
     def setup_grist_table(self, request: HttpRequest, queryset: QuerySet[GristConfig]):

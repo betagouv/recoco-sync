@@ -74,9 +74,8 @@ class Connector(metaclass=ABCMeta):
         comment = payload.get("comment", "")
 
         match get_question_type(question):
-            case QuestionType.MULTIPLE:
-                data[col_id] = ",".join([c["text"] for c in choices])
-                data[f"{col_id}_comment"] = comment
+            case QuestionType.SIMPLE:
+                data[col_id] = comment
 
             case QuestionType.YES_NO:
                 data[col_id] = (
@@ -84,27 +83,18 @@ class Connector(metaclass=ABCMeta):
                 )
                 data[f"{col_id}_comment"] = comment
 
-            case QuestionType.REGULAR | QuestionType.YES_NO_MAYBE:
-                data[col_id] = comment
+            case QuestionType.YES_NO_MAYBE:
+                data[col_id] = str(choices[0]["text"]).lower() if len(choices) > 0 else ""
+                data[f"{col_id}_comment"] = comment
+
+            case QuestionType.CHOICES | QuestionType.MULTIPLE_CHOICES:
+                data[col_id] = ",".join([c["text"] for c in choices])
+                data[f"{col_id}_comment"] = comment
 
         if attachment := payload.get("attachment"):
             data[f"{col_id}_attachment"] = attachment
 
         return data
-
-    def fetch_questions_data(self, **kwargs) -> Generator[tuple[int, dict]]:
-        """Fetch data related to questions through the Recoco API."""
-
-        recoco_client = self.get_recoco_api_client(**kwargs)
-
-        questions = recoco_client.get_questions()
-
-        for question in questions.get("results", []):
-            question_data = self.map_from_question_payload_object(payload=question, **kwargs)
-            yield question["id"], question_data
-
-    def map_from_question_payload_object(self, payload: dict[str, Any], **kwargs) -> dict[str, Any]:
-        return payload
 
     @abstractmethod
     def on_project_event(self, project_id: int, event: WebhookEvent) -> None:
