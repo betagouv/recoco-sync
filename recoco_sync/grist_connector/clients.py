@@ -95,9 +95,9 @@ class GristApiClient:
         )
         return resp.json()
 
-    def update_records(self, table_id: str, records: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    def update_records(self, table_id: str, records: list[dict[str, Any]]) -> dict[str, Any]:
         resp = self._client.patch(
             f"docs/{self.doc_id}/tables/{table_id}/records/",
-            json={"records": [{"id": k, "fields": v} for k, v in records.items()]},
+            json={"records": records},
         )
         return resp.json()

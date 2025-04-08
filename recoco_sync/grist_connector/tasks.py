@@ -106,3 +106,30 @@ def refresh_grist_table(config_id: str):
 
     if errors:
         logger.error(f"Grist {config.name}, update failures: {errors}.")
+
+
+@shared_task
+def sync_grist_references(config_id: str):
+    try:
+        config = GristConfig.objects.get(id=config_id)
+    except GristConfig.DoesNotExist:
+        logger.error(f"GristConfig with id={config_id} does not exist")
+        return
+
+    grist_client = GristApiClient.from_config(config)
+
+    for reference in config.references.all():
+        grist_client.doc_id = reference.doc_id
+        ref_columns = grist_client.get_table_columns(table_id=reference.table_id)
+        ref_records = grist_client.get_records(table_id=reference.table_id, filter={})
+
+        grist_client.doc_id = config.doc_id
+        if not grist_client.table_exists(table_id=reference.table_id):
+            grist_client.create_table(
+                table_id=reference.table_id,
+                columns=ref_columns,
+            )
+        grist_client.update_records(
+            table_id=reference.table_id,
+            records=ref_records.get("records"),
+        )

@@ -8,8 +8,24 @@ from django.utils.html import format_html
 
 from .clients import GristApiClient
 from .connectors import GristConnector
-from .models import GristColumn, GristConfig
-from .tasks import populate_grist_table, refresh_grist_table
+from .models import GristColumn, GristConfig, GristReference
+from .tasks import populate_grist_table, refresh_grist_table, sync_grist_references
+
+
+@admin.register(GristReference)
+class GristReferenceAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "doc_id",
+        "table_id",
+        "api_url",
+    )
+    search_fields = (
+        "name",
+        "doc_id",
+        "table_id",
+    )
 
 
 @admin.register(GristColumn)
@@ -62,6 +78,7 @@ class GristConfigAdmin(admin.ModelAdmin):
         "reset_columns",
         "sync_columns",
         "setup_grist_table",
+        "sync_references",
     ]
 
     inlines = (GristConfigColumnInline,)
@@ -145,6 +162,20 @@ class GristConfigAdmin(admin.ModelAdmin):
                 f"(task ID: {res.id}).",
                 messages.SUCCESS,
             )
+
+    @admin.action(description="Mettre à jour les référentiels")
+    def sync_references(self, request: HttpRequest, queryset: QuerySet[GristConfig]):
+        for config in queryset:
+            if not self._check_config_is_enabled(request, config):
+                continue
+
+        res = sync_grist_references.delay(config.id)
+        self.message_user(
+            request,
+            f"Configuration {config}: une tâche de mise à jour des référentiels a été lancée "
+            f"(task ID: {res.id}).",
+            messages.SUCCESS,
+        )
 
     @admin.action(description="Recréer les colonnes en base de données")
     def reset_columns(self, request: HttpRequest, queryset: QuerySet[GristConfig]):
