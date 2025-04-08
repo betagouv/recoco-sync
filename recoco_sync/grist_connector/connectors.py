@@ -139,5 +139,5 @@ class GristConnector(Connector):
 
         client.create_records(
             table_id=config.table_id,
-            records=[{"object_id": project_id} | project_data],
+            records=[{"fields": {"object_id": project_id} | project_data}],
         )
