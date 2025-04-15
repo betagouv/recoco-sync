@@ -95,22 +95,15 @@ class GristConfigAdmin(admin.ModelAdmin):
 
     @staticmethod
     def _check_table_columns_consistency(config: GristConfig) -> bool:
-        config_table_columns = config.table_columns
-        config_table_columns_keys = [t["id"] for t in config_table_columns]
+        config_table_columns = {t["id"]: t["fields"]["type"] for t in config.table_columns}
 
-        remote_table_columns = GristApiClient.from_config(config).get_table_columns(
-            table_id=config.table_id
-        )
-        remote_table_columns = [
-            {"id": t["id"], "fields": {k: t["fields"][k] for k in ("label", "type")}}
-            for t in remote_table_columns
-            if t["id"] in config_table_columns_keys
-        ]
+        remote_table_columns = {
+            t["id"]: t["fields"]["type"]
+            for t in GristApiClient.from_config(config).get_table_columns(table_id=config.table_id)
+            if t["id"] in config_table_columns.keys()
+        }
 
-        sorted_remote_table_columns = sorted(remote_table_columns, key=lambda x: x["id"])
-        sorted_config_table_columns = sorted(config_table_columns, key=lambda x: x["id"])
-
-        return sorted_remote_table_columns == sorted_config_table_columns
+        return config_table_columns == remote_table_columns
 
     @admin.action(description="Mettre à jour la table Grist")
     def setup_grist_table(self, request: HttpRequest, queryset: QuerySet[GristConfig]):
@@ -160,7 +153,9 @@ class GristConfigAdmin(admin.ModelAdmin):
             )
 
     @admin.action(description="Synchroniser les colonnes de la table Grist")
-    def sync_columns(self, request: HttpRequest, queryset: QuerySet[GristConfig]):
+    def sync_columns(  # noqa: C901
+        self, request: HttpRequest, queryset: QuerySet[GristConfig]
+    ):
         for config in queryset:
             if not self._check_config_is_enabled(request, config):
                 continue
@@ -205,10 +200,7 @@ class GristConfigAdmin(admin.ModelAdmin):
                     continue
 
                 # find out all columns that are in both sides but with diffs
-                if (
-                    remote_column["fields"]["label"] != column["fields"]["label"]
-                    or remote_column["fields"]["type"] != column["fields"]["type"]
-                ):
+                if remote_column["fields"]["type"] != column["fields"]["type"]:
                     self.message_user(
                         request,
                         f"Configuration {config.name}: mise à jour de la colonne '{col_id}'.",
@@ -220,7 +212,6 @@ class GristConfigAdmin(admin.ModelAdmin):
                             {
                                 "id": col_id,
                                 "fields": {
-                                    "label": column["fields"]["label"],
                                     "type": column["fields"]["type"],
                                     "colId": col_id,
                                 },
@@ -237,5 +228,18 @@ class GristConfigAdmin(admin.ModelAdmin):
                         request,
                         f"Action sur la configuration {config.name}: la colonne '{remote_col_id}' "
                         "existe uniquement côté Grist.",
+                        messages.WARNING,
+                    )
+
+            # find out all columns that have been renamed
+            for column in config.table_columns:
+                col_id = column["id"]
+                column_label = column["fields"]["label"]
+                remote_column_label = indexed_remote_table_columns[col_id]["fields"]["label"]
+                if remote_column_label != column_label:
+                    self.message_user(
+                        request,
+                        f"Configuration {config.name}: la colonne '{col_id}' a été renommée "
+                        f"'{column_label}' => '{remote_column_label}'.",
                         messages.WARNING,
                     )
