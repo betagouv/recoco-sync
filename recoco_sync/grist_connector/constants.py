@@ -39,6 +39,14 @@ project_columns_spec = {
         "label": "Code département",
         "type": GristColumnType.TEXT,
     },
+    "region": {
+        "label": "Région",
+        "type": GristColumnType.TEXT,
+    },
+    "region_code": {
+        "label": "Code région",
+        "type": GristColumnType.TEXT,
+    },
     "location": {
         "label": "Lieu",
         "type": GristColumnType.TEXT,
@@ -73,6 +81,10 @@ project_columns_spec = {
     },
     "status": {
         "label": "Statut",
+        "type": GristColumnType.TEXT,
+    },
+    "advisors_note": {
+        "label": "Note des conseillers",
         "type": GristColumnType.TEXT,
     },
 }
