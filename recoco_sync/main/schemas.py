@@ -44,6 +44,16 @@ class Project(BaseModel):
         validation_alias=AliasPath("commune", "department", "code"),
         alias="department_code",
     )
+    commune_region: str | None = (
+        Field(
+            validation_alias=AliasPath("commune", "department", "region", "name"),
+            alias="region",
+        ),
+    )
+    commune_region_code: str | None = Field(
+        validation_alias=AliasPath("commune", "department", "region", "code"),
+        alias="region_code",
+    )
     tags: list[str] = Field(default_factory=list)
 
     class Config:
