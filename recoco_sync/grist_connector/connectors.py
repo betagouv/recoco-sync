@@ -131,13 +131,13 @@ class GristConnector(Connector):
         if len(records := resp["records"]):
             client.update_records(
                 table_id=config.table_id,
-                records={
-                    records[0]["id"]: project_data,
-                },
+                records=[
+                    {"id": records[0]["id"], "fields": project_data},
+                ],
             )
             return
 
         client.create_records(
             table_id=config.table_id,
-            records=[{"object_id": project_id} | project_data],
+            records=[{"fields": {"object_id": project_id} | project_data}],
         )

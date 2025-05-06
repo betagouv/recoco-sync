@@ -10,20 +10,43 @@ from recoco_sync.utils.models import BaseModel
 from .choices import GristColumnType
 
 
-class GristConfig(BaseModel):
-    name = models.CharField(max_length=255, verbose_name="Nom de la configuration")
-
+class GristObject(BaseModel):
     doc_id = models.CharField(max_length=32)
     table_id = models.CharField(max_length=32)
-
-    enabled = models.BooleanField(default=True)
-
     api_url = models.CharField(max_length=128)
     api_key = models.CharField(max_length=64)
+
+    class Meta:
+        abstract = True
+
+
+class GristReference(GristObject):
+    name = models.CharField(max_length=255, verbose_name="Nom du référentiel")
+
+    class Meta:
+        db_table = "gristreference"
+        ordering = ("-created",)
+        verbose_name = "Référentiel Grist"
+        verbose_name_plural = "Référentiels Grist"
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class GristConfig(GristObject):
+    name = models.CharField(max_length=255, verbose_name="Nom de la configuration")
+
+    enabled = models.BooleanField(default=True)
 
     webhook_config = models.ForeignKey(
         WebhookConfig,
         on_delete=models.CASCADE,
+        related_name="grist_configs",
+    )
+
+    references = models.ManyToManyField(
+        GristReference,
+        blank=True,
         related_name="grist_configs",
     )
 
