@@ -7,7 +7,7 @@ from recoco_sync.main.connectors import Connector
 from recoco_sync.main.models import WebhookEvent
 
 from .clients import LesCommunsApiClient
-from .models import LesCommunsConfig, LesCommunsProjet
+from .models import LesCommunsConfig, LesCommunsProjectSelection, LesCommunsProjet
 from .schemas import Collectivite, Porteur, Projet
 
 
@@ -16,6 +16,12 @@ class LesCommunsConnector(Connector):
         for config in LesCommunsConfig.objects.filter(
             enabled=True, webhook_config=event.webhook_config
         ):
+            # temporary trick to avoid creating lescommuns projects for all recoco projects
+            if not LesCommunsProjectSelection.objects.filter(
+                config=config, recoco_id=project_id
+            ).exists():
+                continue
+
             for _, project_data in self.fetch_projects_data(
                 project_ids=[project_id], config=config
             ):
