@@ -88,7 +88,7 @@ class Connector(metaclass=ABCMeta):
                 data[f"{col_id}_comment"] = comment
 
             case QuestionType.CHOICES | QuestionType.MULTIPLE_CHOICES:
-                data[col_id] = ",".join([c["text"] for c in choices])
+                data[col_id] = ",".join([c.get("conclusion") or c.get("text") for c in choices])
                 data[f"{col_id}_comment"] = comment
 
         if attachment := payload.get("attachment"):

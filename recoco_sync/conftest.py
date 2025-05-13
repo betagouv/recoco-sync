@@ -55,7 +55,14 @@ def project_payload_object():
             "name": "MONNIERES",
             "insee": "44100",
             "postal": "44690",
-            "department": {"name": "Loire-Atlantique", "code": "44"},
+            "department": {
+                "name": "Loire-Atlantique",
+                "code": "44",
+                "region": {
+                    "name": "Pays de la Loire",
+                    "code": "52",
+                },
+            },
             "latitude": 47.1202035218,
             "longitude": -1.34924956417,
         },
@@ -70,6 +77,7 @@ def project_payload_object():
             {"name": "Etudes"},
         ],
         "tags": ["tag1", "tag2"],
+        "advisors_note": "Note conseiller",
     }
 
 
