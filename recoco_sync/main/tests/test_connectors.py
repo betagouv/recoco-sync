@@ -19,6 +19,8 @@ class TestConnector:
             "insee": "44100",
             "department": "Loire-Atlantique",
             "department_code": "44",
+            "region": "Pays de la Loire",
+            "region_code": "52",
             "location": "rue des hirondelles",
             "latitude": 47.1202035218,
             "longitude": -1.34924956417,
@@ -29,7 +31,8 @@ class TestConnector:
             "inactive_since": None,
             "active": True,
             "status": "IN_PROGRESS",
-        }, data
+            "advisors_note": "Note conseiller",
+        }
 
     def test_map_survey_answer_payload_object(self, survey_answer_payload_object):
         assert ConnectorStub().map_from_survey_answer_payload_object(

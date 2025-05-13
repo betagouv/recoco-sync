@@ -38,6 +38,13 @@ def grist_table_columns():
                 },
             },
             {
+                "id": "advisors_note",
+                "fields": {
+                    "type": "Text",
+                    "label": "Note conseiller",
+                },
+            },
+            {
                 "id": "city",
                 "fields": {
                     "type": "Text",
@@ -70,6 +77,20 @@ def grist_table_columns():
                 "fields": {
                     "type": "Text",
                     "label": "Code département",
+                },
+            },
+            {
+                "id": "region",
+                "fields": {
+                    "type": "Text",
+                    "label": "Région",
+                },
+            },
+            {
+                "id": "region_code",
+                "fields": {
+                    "type": "Text",
+                    "label": "Code région",
                 },
             },
             {
