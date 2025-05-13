@@ -28,6 +28,9 @@ class LesCommunsConfig(BaseModel):
             models.Index(fields=["enabled"]),
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class LesCommunsProjet(BaseModel):
     lescommuns_id = models.CharField(max_length=100)
