@@ -16,15 +16,3 @@ Trouvez les détails d'installation de l'application en local pour le développe
 
 Trouvez les détails du déploiement de l'application sur la documentation dédiée : [DEPLOIEMENT.md](doc/DEPLOIEMENT.md).
 
-
-## TODO
-
-filtre par token
-
-
-filtre de diffusion
-- question edl yes/no
-- bypass
-
-
-filtre project IDs

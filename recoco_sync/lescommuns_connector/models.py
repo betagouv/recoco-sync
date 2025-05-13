@@ -15,6 +15,8 @@ class LesCommunsConfig(BaseModel):
         related_name="lescommuns_configs",
     )
 
+    api_key = models.CharField(max_length=64)
+
     enabled = models.BooleanField(default=True)
 
     class Meta:
