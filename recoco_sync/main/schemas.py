@@ -47,10 +47,14 @@ class Project(BaseModel):
     commune_region: str | None = Field(
         validation_alias=AliasPath("commune", "department", "region", "name"),
         alias="region",
+        default=None,
+        exclude_unset=True,
     )
     commune_region_code: str | None = Field(
         validation_alias=AliasPath("commune", "department", "region", "code"),
         alias="region_code",
+        default=None,
+        exclude_unset=True,
     )
     tags: list[str] = Field(default_factory=list)
     advisors_note: str | None
