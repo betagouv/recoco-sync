@@ -235,6 +235,10 @@ class GristConfigAdmin(admin.ModelAdmin):
             for column in config.table_columns:
                 col_id = column["id"]
                 column_label = column["fields"]["label"]
+
+                if col_id not in indexed_remote_table_columns:
+                    continue
+
                 remote_column_label = indexed_remote_table_columns[col_id]["fields"]["label"]
                 if remote_column_label != column_label:
                     self.message_user(
