@@ -13,6 +13,7 @@ from django.utils.module_loading import module_has_submodule
 from recoco_sync.main.models import WebhookEvent
 from recoco_sync.main.utils import QuestionType, get_question_type
 
+from .choices import ObjectType
 from .clients import RecocoApiClient
 from .schemas import Project
 
@@ -97,7 +98,9 @@ class Connector(metaclass=ABCMeta):
         return data
 
     @abstractmethod
-    def on_project_event(self, project_id: int, event: WebhookEvent) -> None:
+    def on_webhook_event(
+        self, object_id: int, object_type: ObjectType, event: WebhookEvent
+    ) -> None:
         pass
 
 

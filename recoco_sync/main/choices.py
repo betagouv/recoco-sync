@@ -14,3 +14,8 @@ class ObjectType(models.TextChoices):
     PROJECT = "projects.Project", "Project"
     SURVEY_ANSWER = "survey.Answer", "Answer"
     TAGGEDITEM = "taggit.TaggedItem", "TaggedItem"
+    RECOMMENDATION = "tasks.Task", "Task"
+
+    @property
+    def is_project(self) -> bool:
+        return self != self.RECOMMENDATION

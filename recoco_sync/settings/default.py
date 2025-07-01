@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     + [
         "recoco_sync.main",
         "recoco_sync.grist_connector",
+        "recoco_sync.lescommuns_connector",
     ]
 )
 
@@ -150,5 +151,16 @@ RECOCO_API_PASSWORD = env.str("RECOCO_API_PASSWORD")
 #
 # Grist
 #
-
 TABLE_COLUMN_HEADER_MAX_LENGTH = env.str("TABLE_COLUMN_HEADER_MAX_LENGTH", default=80)
+
+#
+# LesCommuns
+#
+LESCOMMUNS_API_URL = env.str("LESCOMMUNS_API_URL")
+LESCOMMUNS_API_USERNAME = env.str("LESCOMMUNS_API_USERNAME")
+LESCOMMUNS_API_PASSWORD = env.str("LESCOMMUNS_API_PASSWORD")
+
+LESCOMMUNS_PROJECT_SELECTION_ENABLED = env.bool(
+    "LESCOMMUNS_PROJECT_SELECTION_ENABLED", default=True
+)
+LESCOMMUNS_RESOURCE_TAG_NAME = env.str("LESCOMMUNS_RESOURCE_TAG_NAME", default="les-communs")
