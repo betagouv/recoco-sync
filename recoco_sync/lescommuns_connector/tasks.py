@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from celery import shared_task
 
+from recoco_sync.main.clients import RecocoApiClient
+
 from .clients import LesCommunsApiClient
 from .models import LesCommunsProjet
 
@@ -22,3 +24,31 @@ def load_lescommuns_services(project_id: int):
     if len(services):
         project.services = services
         project.save()
+
+
+@shared_task
+def update_or_create_resource_addons(project_id: int):
+    try:
+        project = LesCommunsProjet.objects.select_related("config__webhook_config").get(
+            id=project_id
+        )
+    except LesCommunsProjet.DoesNotExist as err:
+        raise ValueError(f"LesCommunsProjet with id={project_id} does not exist") from err
+
+    if not project.config.enabled:
+        raise ValueError(f"LesCommunsConfig with id={project.config_id} is not enabled")
+
+    if not project.is_service_ready:
+        return
+
+    # fetch existing addons
+    # update or create addons based on project.services
+
+    recoco_api_client = RecocoApiClient(api_url=project.config.webhook_config.api_url)
+    response = recoco_api_client.create_resource_addon(
+        payload={
+            "recommendation": project.recommendation_id,
+            "nature": "lescommuns",
+            "data": project.services,
+        }
+    )

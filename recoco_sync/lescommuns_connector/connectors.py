@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from datetime import datetime
 from typing import Any
 
@@ -14,9 +15,14 @@ from .models import LesCommunsConfig, LesCommunsProjectSelection, LesCommunsProj
 from .schemas import Collectivite, Porteur, Projet
 from .tasks import load_lescommuns_services
 
+logger = logging.getLogger(__name__)
+
 
 class LesCommunsConnector(Connector):
     def on_webhook_event(self, object_id: int, object_type: ObjectType, event: WebhookEvent):
+        project_id = None
+        recommendation_id = None
+
         match object_type:
             case ObjectType.RECOMMENDATION:
                 try:
@@ -24,16 +30,38 @@ class LesCommunsConnector(Connector):
                         settings.LESCOMMUNS_RESOURCE_TAG_NAME
                         in event.object_data["resource"]["tags"]
                     ):
-                        self._update_or_create_project(
-                            project_id=event.object_data.get("project"), event=event
-                        )
-                except KeyError:
+                        project_id = event.object_data["project"]
+                        recommendation_id = object_id
+                except KeyError as err:
+                    logger.error(
+                        f"Error processing webhook event for recommendation {object_id}: {err}"
+                    )
                     pass
 
             case ObjectType.PROJECT:
-                self._update_or_create_project(project_id=object_id, event=event)
+                project_id = object_id
+
             case _:
                 pass
+
+        if project_id is None or not self._is_project_selection_enabled(project_id):
+            return
+
+        for config in LesCommunsConfig.objects.filter(
+            enabled=True, webhook_config=event.webhook_config
+        ):
+            _, project_data = next(
+                self.fetch_projects_data(project_ids=[project_id], config=config)
+            )
+
+            project = self.update_or_create_project_record(
+                config=config, project_id=project_id, project_data=project_data
+            )
+            if recommendation_id:
+                project.recommendation_id = recommendation_id
+                project.save()
+
+            load_lescommuns_services.delay(config_id=config.id, project_id=project.id)
 
     def _is_project_selection_enabled(self, project_id: int) -> bool:
         """
@@ -46,21 +74,6 @@ class LesCommunsConnector(Connector):
         return LesCommunsProjectSelection.objects.filter(
             recoco_id=project_id, config__enabled=True
         ).exists()
-
-    def _update_or_create_project(self, project_id: int, event: WebhookEvent):
-        for config in LesCommunsConfig.objects.filter(
-            enabled=True, webhook_config=event.webhook_config
-        ):
-            if not self._is_project_selection_enabled(project_id):
-                continue
-
-            for _, project_data in self.fetch_projects_data(
-                project_ids=[project_id], config=config
-            ):
-                project = self.update_or_create_project_record(
-                    config=config, project_id=project_id, project_data=project_data
-                )
-                load_lescommuns_services.delay(config_id=config.id, project_id=project.id)
 
     def get_recoco_api_client(self, **kwargs):
         config: LesCommunsConfig = kwargs.get("config")
