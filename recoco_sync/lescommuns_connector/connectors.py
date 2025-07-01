@@ -12,6 +12,7 @@ from recoco_sync.main.models import WebhookEvent
 from .clients import LesCommunsApiClient
 from .models import LesCommunsConfig, LesCommunsProjectSelection, LesCommunsProjet
 from .schemas import Collectivite, Porteur, Projet
+from .tasks import load_lescommuns_services
 
 
 class LesCommunsConnector(Connector):
@@ -26,9 +27,6 @@ class LesCommunsConnector(Connector):
                         self._update_or_create_project(
                             project_id=event.object_data.get("project"), event=event
                         )
-
-                    # TODO: create recoco resource addon
-
                 except KeyError:
                     pass
 
@@ -59,9 +57,10 @@ class LesCommunsConnector(Connector):
             for _, project_data in self.fetch_projects_data(
                 project_ids=[project_id], config=config
             ):
-                self.update_or_create_project_record(
+                project = self.update_or_create_project_record(
                     config=config, project_id=project_id, project_data=project_data
                 )
+                load_lescommuns_services.delay(config_id=config.id, project_id=project.id)
 
     def get_recoco_api_client(self, **kwargs):
         config: LesCommunsConfig = kwargs.get("config")
@@ -133,7 +132,7 @@ class LesCommunsConnector(Connector):
 
     def update_or_create_project_record(
         self, config: LesCommunsConfig, project_id: int, project_data: dict
-    ):
+    ) -> LesCommunsProjet:
         """
         Update a record related to a given project on LesCommuns side,
         or create it if it doesn't exist.
@@ -141,18 +140,16 @@ class LesCommunsConnector(Connector):
 
         lescommuns_api_client = LesCommunsApiClient.from_config(config)
 
+        # Update or create the project in LesCommuns
         if project := LesCommunsProjet.objects.filter(recoco_id=project_id, config=config).first():
             lescommuns_api_client.update_project(
                 project_id=project.lescommuns_id, payload=project_data
             )
             project.touch()
             project.save()
-            return
+            return project
 
         response = lescommuns_api_client.create_project(payload=project_data)
-
-        LesCommunsProjet.objects.create(
-            recoco_id=project_id,
-            lescommuns_id=response["id"],
-            config=config,
+        return LesCommunsProjet.objects.create(
+            recoco_id=project_id, lescommuns_id=response["id"], config=config
         )

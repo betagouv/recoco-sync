@@ -57,3 +57,7 @@ class LesCommunsApiClient:
     def update_project(self, project_id: int, payload: dict[str, str]) -> dict[str, Any]:
         response = self._client.patch(f"/projets/{project_id}/", json=payload)
         return response.json()
+
+    def get_project_services(self, project_id: int) -> list[dict[str, Any]]:
+        response = self._client.get(f"/services/project/{project_id}/")
+        return response.json()

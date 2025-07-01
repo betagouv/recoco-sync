@@ -4,6 +4,8 @@ import pytest
 
 from recoco_sync.lescommuns_connector.connectors import LesCommunsConnector
 
+from .factories import LesCommunsProjectSelectionFactory
+
 
 @pytest.mark.django_db
 class TestLesCommunsConnector:
@@ -19,14 +21,18 @@ class TestLesCommunsConnector:
             "externalId": "777",
             "phase": "Idée",
             "phaseStatut": "En cours",
+            "budgetPrevisionnel": None,
             "dateDebutPrevisionnelle": "2023-10-10",
             "porteur": {
+                "codeSiret": None,
+                "referentFonction": None,
                 "referentEmail": "anakin.skywalker@jedi.com",
                 "referentNom": None,
                 "referentPrenom": None,
             },
             "competences": [],
             "leviers": [],
+            "programme": None,
         }
 
     def test_map_from_survey_answer_payload_object(self, survey_answer_payload_object):
@@ -56,3 +62,17 @@ class TestLesCommunsConnector:
         assert LesCommunsConnector.phase_statut_mapping("DONE") == "Terminé"
         assert LesCommunsConnector.phase_statut_mapping("STUCK") == "Bloqué"
         assert LesCommunsConnector.phase_statut_mapping("REJECTED") == "Abandonné"
+
+    def test_is_project_selection_enabled(self, settings):
+        settings.LESCOMMUNS_PROJECT_SELECTION_ENABLED = False
+        assert LesCommunsConnector()._is_project_selection_enabled(1) is True
+
+        settings.LESCOMMUNS_PROJECT_SELECTION_ENABLED = True
+        assert LesCommunsConnector()._is_project_selection_enabled(1) is False
+
+        selection = LesCommunsProjectSelectionFactory(recoco_id=1, config__enabled=True)
+        assert LesCommunsConnector()._is_project_selection_enabled(1) is True
+
+        selection.config.enabled = False
+        selection.config.save()
+        assert LesCommunsConnector()._is_project_selection_enabled(1) is False

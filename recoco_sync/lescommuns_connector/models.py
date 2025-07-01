@@ -40,6 +40,13 @@ class LesCommunsProjet(BaseModel):
         LesCommunsConfig, on_delete=models.CASCADE, related_name="lescommuns_projects"
     )
 
+    services = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Services LesCommuns",
+        help_text="Services associés au projet dans LesCommuns",
+    )
+
     class Meta:
         verbose_name = "Projet LesCommuns"
         verbose_name_plural = "Projets LesCommuns"
