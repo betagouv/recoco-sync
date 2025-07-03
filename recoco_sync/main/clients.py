@@ -101,6 +101,12 @@ class RecocoApiClient:
         response = self._client.get("/survey/questions/?limit=500")
         return response.json()
 
+    def get_resource_addons(self, recommendation_id: int) -> dict[str, Any]:
+        response = self._client.get(
+            f"/api/resource-addons/?recommendation={recommendation_id}&nature=lescommuns"
+        )
+        return response.json()
+
     def create_resource_addon(self, payload: dict[str, Any]) -> dict[str, Any]:
         response = self._client.post("/api/resource-addons/", json=payload)
         return response.json()

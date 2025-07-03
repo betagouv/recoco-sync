@@ -45,10 +45,14 @@ def update_or_create_resource_addons(project_id: int):
     # update or create addons based on project.services
 
     recoco_api_client = RecocoApiClient(api_url=project.config.webhook_config.api_url)
-    response = recoco_api_client.create_resource_addon(
-        payload={
-            "recommendation": project.recommendation_id,
-            "nature": "lescommuns",
-            "data": project.services,
-        }
+    existing_addons = recoco_api_client.get_resource_addons(
+        recommendation_id=project.recommendation_id
     )
+
+    # response = recoco_api_client.create_resource_addon(
+    #     payload={
+    #         "recommendation": project.recommendation_id,
+    #         "nature": "lescommuns",
+    #         "data": project.services,
+    #     }
+    # )
