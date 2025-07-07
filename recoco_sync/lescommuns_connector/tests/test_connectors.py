@@ -3,6 +3,8 @@ from __future__ import annotations
 import pytest
 
 from recoco_sync.lescommuns_connector.connectors import LesCommunsConnector
+from recoco_sync.main.choices import ObjectType
+from recoco_sync.main.tests.factories import WebhookEventFactory
 
 from .factories import LesCommunsProjectSelectionFactory
 
@@ -76,3 +78,47 @@ class TestLesCommunsConnector:
         selection.config.enabled = False
         selection.config.save()
         assert LesCommunsConnector()._is_project_selection_enabled(1) is False
+
+    def test_extract_project_id_from_event(self, settings):
+        settings.LESCOMMUNS_RESOURCE_TAG_NAME = "lescommuns-test"
+
+        connector = LesCommunsConnector()
+
+        assert (
+            connector._extract_project_id_from_event(
+                1, ObjectType.PROJECT, WebhookEventFactory.build()
+            )
+            == 1
+        )
+        assert (
+            connector._extract_project_id_from_event(
+                2,
+                ObjectType.RECOMMENDATION,
+                WebhookEventFactory.build(
+                    payload={"object": {"resource": {"tags": ["lescommuns-test"]}, "project": 1}}
+                ),
+            )
+            == 1
+        )
+        assert (
+            connector._extract_project_id_from_event(
+                3,
+                ObjectType.RECOMMENDATION,
+                WebhookEventFactory.build(
+                    payload={"object": {"resource": {"tags": ["other-tag"]}, "project": 1}}
+                ),
+            )
+            is None
+        )
+        assert (
+            connector._extract_project_id_from_event(
+                4, ObjectType.SURVEY_ANSWER, WebhookEventFactory.build()
+            )
+            is None
+        )
+        assert (
+            connector._extract_project_id_from_event(
+                4, ObjectType.TAGGEDITEM, WebhookEventFactory.build()
+            )
+            is None
+        )

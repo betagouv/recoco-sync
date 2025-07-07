@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from datetime import datetime
 from typing import Any
 
@@ -12,11 +13,38 @@ from recoco_sync.main.models import WebhookEvent
 from .clients import LesCommunsApiClient
 from .models import LesCommunsConfig, LesCommunsProjectSelection, LesCommunsProjet
 from .schemas import Collectivite, Porteur, Projet
-from .tasks import load_lescommuns_services
+from .tasks import load_services_and_create_addons
+
+logger = logging.getLogger(__name__)
 
 
 class LesCommunsConnector(Connector):
     def on_webhook_event(self, object_id: int, object_type: ObjectType, event: WebhookEvent):
+        project_id = self._extract_project_id_from_event(object_id, object_type, event)
+        if project_id is None or not self._is_project_selection_enabled(project_id):
+            return
+
+        recommendation_id = object_id if object_type == ObjectType.RECOMMENDATION else None
+
+        for config in LesCommunsConfig.objects.filter(
+            enabled=True, webhook_config=event.webhook_config
+        ):
+            _, project_data = next(
+                self.fetch_projects_data(project_ids=[project_id], config=config)
+            )
+
+            project = self.update_or_create_project_record(
+                config=config, project_id=project_id, project_data=project_data
+            )
+            if recommendation_id:
+                project.recommendation_id = recommendation_id
+                project.save()
+
+            load_services_and_create_addons.apply_async((project.id,), countdown=60)
+
+    def _extract_project_id_from_event(
+        self, object_id: int, object_type: ObjectType, event: WebhookEvent
+    ) -> int | None:
         match object_type:
             case ObjectType.RECOMMENDATION:
                 try:
@@ -24,16 +52,18 @@ class LesCommunsConnector(Connector):
                         settings.LESCOMMUNS_RESOURCE_TAG_NAME
                         in event.object_data["resource"]["tags"]
                     ):
-                        self._update_or_create_project(
-                            project_id=event.object_data.get("project"), event=event
-                        )
-                except KeyError:
-                    pass
+                        return event.object_data["project"]
+                except KeyError as err:
+                    logger.error(
+                        f"Error processing webhook event for recommendation {object_id}: {err}"
+                    )
+                return None
 
             case ObjectType.PROJECT:
-                self._update_or_create_project(project_id=object_id, event=event)
+                return object_id
+
             case _:
-                pass
+                return None
 
     def _is_project_selection_enabled(self, project_id: int) -> bool:
         """
@@ -46,21 +76,6 @@ class LesCommunsConnector(Connector):
         return LesCommunsProjectSelection.objects.filter(
             recoco_id=project_id, config__enabled=True
         ).exists()
-
-    def _update_or_create_project(self, project_id: int, event: WebhookEvent):
-        for config in LesCommunsConfig.objects.filter(
-            enabled=True, webhook_config=event.webhook_config
-        ):
-            if not self._is_project_selection_enabled(project_id):
-                continue
-
-            for _, project_data in self.fetch_projects_data(
-                project_ids=[project_id], config=config
-            ):
-                project = self.update_or_create_project_record(
-                    config=config, project_id=project_id, project_data=project_data
-                )
-                load_lescommuns_services.delay(config_id=config.id, project_id=project.id)
 
     def get_recoco_api_client(self, **kwargs):
         config: LesCommunsConfig = kwargs.get("config")
@@ -78,21 +93,21 @@ class LesCommunsConnector(Connector):
             porteur_data = switchtenders[0]
             porteur = Porteur(
                 code_siret=None,
-                referentFonction=None,
-                referentEmail=porteur_data.get("email"),
-                referentPrenom=porteur_data.get("firstname"),
-                referentNom=porteur_data.get("lastname"),
+                referent_fonction=None,
+                referent_email=porteur_data.get("email"),
+                referent_prenom=porteur_data.get("firstname"),
+                referent_nom=porteur_data.get("lastname"),
             )
 
         data = Projet(
             nom=payload.get("name"),
             description=payload.get("description"),
             collectivites=collectivites,
-            externalId=str(payload.get("id")),
+            external_id=str(payload.get("id")),
             phase=self.phase_mapping(payload.get("status")),
-            phaseStatut=self.phase_statut_mapping(payload.get("status")),
+            phase_statut=self.phase_statut_mapping(payload.get("status")),
             budget_previsionnel=None,
-            dateDebutPrevisionnelle=datetime.fromisoformat(payload.get("created_on")).strftime(
+            date_debut_previsionnelle=datetime.fromisoformat(payload.get("created_on")).strftime(
                 "%Y-%m-%d"
             ),
             porteur=porteur,

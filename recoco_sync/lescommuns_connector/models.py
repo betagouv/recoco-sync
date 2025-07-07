@@ -47,12 +47,23 @@ class LesCommunsProjet(BaseModel):
         help_text="Services associés au projet dans LesCommuns",
     )
 
+    recommendation_id = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="ID de la recommandation",
+        help_text="ID de la recommandation associée dans Recoco",
+    )
+
     class Meta:
         verbose_name = "Projet LesCommuns"
         verbose_name_plural = "Projets LesCommuns"
         db_table = "lescommunsprojet"
         ordering = ("-created",)
         unique_together = ("config", "lescommuns_id", "recoco_id")
+
+    @property
+    def is_service_ready(self) -> bool:
+        return self.recommendation_id is not None and len(self.services) > 0
 
 
 class LesCommunsProjectSelection(BaseModel):
