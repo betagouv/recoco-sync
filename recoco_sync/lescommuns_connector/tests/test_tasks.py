@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -10,6 +10,24 @@ from recoco_sync.lescommuns_connector.tasks import (
 )
 
 from .factories import LesCommunsProjetFactory
+
+
+@pytest.fixture
+def services():
+    return [
+        {
+            "id": 1,
+            "name": "Service 1",
+            "logo_url": "string",
+            "iframe_url": "string",
+        },
+        {
+            "id": 2,
+            "name": "Service 2",
+            "logo_url": "string",
+            "iframe_url": "string",
+        },
+    ]
 
 
 @pytest.mark.django_db
@@ -24,25 +42,13 @@ class TestLoadLescommunsServices:
             load_lescommuns_services(project_id=project.id)
 
     @patch("recoco_sync.lescommuns_connector.tasks.LesCommunsApiClient.get_project_services")
-    def test_load_services(self, mock_get_project_services):
-        mock_get_project_services.return_value = [
-            {
-                "id": 1,
-                "name": "Service 1",
-                "logoUrl": "string",
-                "iframeUrl": "string",
-            },
-            {
-                "id": 2,
-                "name": "Service 2",
-                "logoUrl": "string",
-                "iframeUrl": "string",
-            },
-        ]
+    def test_load_services(self, mock_get_project_services, services):
+        mock_get_project_services.return_value = services
 
         project = LesCommunsProjetFactory()
 
         assert load_lescommuns_services(project_id=project.id) is True
+
         project.refresh_from_db()
         assert project.services == [
             {
@@ -103,3 +109,40 @@ class TestUpdateOrCreateResourceAddons:
     def test_service_not_ready(self):
         project = LesCommunsProjetFactory(recommendation_id=None)
         assert update_or_create_resource_addons(project_id=project.id) is False
+
+    @patch(
+        "recoco_sync.main.clients.RecocoApiClient.get_resource_addons",
+        Mock(return_value={"count": 0}),
+    )
+    def test_create_addon_called(self, services):
+        project = LesCommunsProjetFactory(recommendation_id=1, services=services)
+
+        with patch("recoco_sync.main.clients.RecocoApiClient.create_resource_addon") as mock_create:
+            assert update_or_create_resource_addons(project_id=project.id) is True
+            mock_create.assert_called_once_with(
+                payload={
+                    "recommendation": 1,
+                    "nature": "lescommuns",
+                    "data": services,
+                    "enabled": True,
+                }
+            )
+
+    @patch(
+        "recoco_sync.main.clients.RecocoApiClient.get_resource_addons",
+        Mock(return_value={"count": 1, "results": [{"id": 8}]}),
+    )
+    def test_update_addon_called(self, services):
+        project = LesCommunsProjetFactory(recommendation_id=1, services=services)
+
+        with patch("recoco_sync.main.clients.RecocoApiClient.update_resource_addon") as mock_update:
+            assert update_or_create_resource_addons(project_id=project.id) is True
+            mock_update.assert_called_once_with(
+                addon_id=8,
+                payload={
+                    "recommendation": 1,
+                    "nature": "lescommuns",
+                    "data": services,
+                    "enabled": True,
+                },
+            )

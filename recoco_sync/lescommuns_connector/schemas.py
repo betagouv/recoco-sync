@@ -59,4 +59,4 @@ class Service(BaseModel):
 
     class Config:
         alias_generator = to_camel
-        allow_population_by_field_name = True
+        validate_by_name = True
