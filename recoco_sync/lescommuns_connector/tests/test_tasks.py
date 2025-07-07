@@ -99,3 +99,7 @@ class TestUpdateOrCreateResourceAddons:
         project = LesCommunsProjetFactory(config__webhook_config__enabled=False)
         with pytest.raises(ValueError):
             update_or_create_resource_addons(project_id=project.id)
+
+    def test_service_not_ready(self):
+        project = LesCommunsProjetFactory(recommendation_id=None)
+        assert update_or_create_resource_addons(project_id=project.id) is False
