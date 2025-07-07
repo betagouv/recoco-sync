@@ -13,7 +13,7 @@ precommit:
 	@pre-commit run --all-files
 
 test:
-	@pytest -n auto --maxfail=3 $(TEST_ARGS)
+	@pytest --maxfail=3 $(TEST_ARGS)
 
 migrate:
 	@python manage.py migrate

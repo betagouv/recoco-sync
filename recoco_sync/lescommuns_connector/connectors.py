@@ -20,32 +20,11 @@ logger = logging.getLogger(__name__)
 
 class LesCommunsConnector(Connector):
     def on_webhook_event(self, object_id: int, object_type: ObjectType, event: WebhookEvent):
-        project_id = None
-        recommendation_id = None
-
-        match object_type:
-            case ObjectType.RECOMMENDATION:
-                try:
-                    if (
-                        settings.LESCOMMUNS_RESOURCE_TAG_NAME
-                        in event.object_data["resource"]["tags"]
-                    ):
-                        project_id = event.object_data["project"]
-                        recommendation_id = object_id
-                except KeyError as err:
-                    logger.error(
-                        f"Error processing webhook event for recommendation {object_id}: {err}"
-                    )
-                    pass
-
-            case ObjectType.PROJECT:
-                project_id = object_id
-
-            case _:
-                pass
-
+        project_id = self._extract_project_id_from_event(object_id, object_type, event)
         if project_id is None or not self._is_project_selection_enabled(project_id):
             return
+
+        recommendation_id = object_id if object_type == ObjectType.RECOMMENDATION else None
 
         for config in LesCommunsConfig.objects.filter(
             enabled=True, webhook_config=event.webhook_config
@@ -61,7 +40,30 @@ class LesCommunsConnector(Connector):
                 project.recommendation_id = recommendation_id
                 project.save()
 
-            load_services_and_create_addons.delay(project_id=project.id)
+            load_services_and_create_addons.apply_async((project.id,), countdown=60)
+
+    def _extract_project_id_from_event(
+        self, object_id: int, object_type: ObjectType, event: WebhookEvent
+    ) -> int | None:
+        match object_type:
+            case ObjectType.RECOMMENDATION:
+                try:
+                    if (
+                        settings.LESCOMMUNS_RESOURCE_TAG_NAME
+                        in event.object_data["resource"]["tags"]
+                    ):
+                        return event.object_data["project"]
+                except KeyError as err:
+                    logger.error(
+                        f"Error processing webhook event for recommendation {object_id}: {err}"
+                    )
+                return None
+
+            case ObjectType.PROJECT:
+                return object_id
+
+            case _:
+                return None
 
     def _is_project_selection_enabled(self, project_id: int) -> bool:
         """
