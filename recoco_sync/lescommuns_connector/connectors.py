@@ -13,7 +13,7 @@ from recoco_sync.main.models import WebhookEvent
 from .clients import LesCommunsApiClient
 from .models import LesCommunsConfig, LesCommunsProjectSelection, LesCommunsProjet
 from .schemas import Collectivite, Porteur, Projet
-from .tasks import load_lescommuns_services
+from .tasks import load_services_and_create_addons
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ class LesCommunsConnector(Connector):
                 project.recommendation_id = recommendation_id
                 project.save()
 
-            load_lescommuns_services.delay(config_id=config.id, project_id=project.id)
+            load_services_and_create_addons.delay(project_id=project.id)
 
     def _is_project_selection_enabled(self, project_id: int) -> bool:
         """

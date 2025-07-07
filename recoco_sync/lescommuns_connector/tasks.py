@@ -9,7 +9,7 @@ from .models import LesCommunsProjet
 
 
 @shared_task
-def load_lescommuns_services(project_id: int):
+def load_lescommuns_services(project_id: int) -> bool:
     try:
         project = LesCommunsProjet.objects.select_related("config").get(id=project_id)
     except LesCommunsProjet.DoesNotExist as err:
@@ -24,10 +24,13 @@ def load_lescommuns_services(project_id: int):
     if len(services):
         project.services = services
         project.save()
+        return True
+
+    return False
 
 
 @shared_task
-def update_or_create_resource_addons(project_id: int):
+def update_or_create_resource_addons(project_id: int) -> bool:
     try:
         project = LesCommunsProjet.objects.select_related("config__webhook_config").get(
             id=project_id
@@ -43,7 +46,7 @@ def update_or_create_resource_addons(project_id: int):
         raise ValueError(f"WebhookConfig with id={webhook_config.id} is not enabled")
 
     if not project.is_service_ready:
-        return
+        return False
 
     recoco_api_client = RecocoApiClient(api_url=webhook_config.api_url)
 
@@ -72,3 +75,13 @@ def update_or_create_resource_addons(project_id: int):
                 "enabled": True,
             },
         )
+
+    return True
+
+
+@shared_task(bind=True, retry_kwargs={"max_retries": 3}, retry_backoff=True)
+def load_services_and_create_addons(self, project_id: int):
+    if not load_lescommuns_services.s(project_id)():
+        raise self.retry()
+    if not update_or_create_resource_addons.s(project_id)():
+        raise self.retry()
