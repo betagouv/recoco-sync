@@ -38,21 +38,37 @@ def update_or_create_resource_addons(project_id: int):
     if not project.config.enabled:
         raise ValueError(f"LesCommunsConfig with id={project.config_id} is not enabled")
 
+    webhook_config = project.config.webhook_config
+    if not webhook_config.enabled:
+        raise ValueError(f"WebhookConfig with id={webhook_config.id} is not enabled")
+
     if not project.is_service_ready:
         return
 
-    # fetch existing addons
-    # update or create addons based on project.services
+    recoco_api_client = RecocoApiClient(api_url=webhook_config.api_url)
 
-    recoco_api_client = RecocoApiClient(api_url=project.config.webhook_config.api_url)
+    # fetch existing addons
     existing_addons = recoco_api_client.get_resource_addons(
         recommendation_id=project.recommendation_id
     )
 
-    # response = recoco_api_client.create_resource_addon(
-    #     payload={
-    #         "recommendation": project.recommendation_id,
-    #         "nature": "lescommuns",
-    #         "data": project.services,
-    #     }
-    # )
+    # update or create addons based on project.services
+    if existing_addons.get("count") == 0:
+        recoco_api_client.create_resource_addon(
+            payload={
+                "recommendation": project.recommendation_id,
+                "nature": "lescommuns",
+                "data": project.services,
+                "enabled": True,
+            }
+        )
+    else:
+        recoco_api_client.update_resource_addon(
+            addon_id=existing_addons["results"][0]["id"],
+            payload={
+                "recommendation": project.recommendation_id,
+                "nature": "lescommuns",
+                "data": project.services,
+                "enabled": True,
+            },
+        )
