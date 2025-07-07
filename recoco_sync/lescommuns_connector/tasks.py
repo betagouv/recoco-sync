@@ -6,6 +6,7 @@ from recoco_sync.main.clients import RecocoApiClient
 
 from .clients import LesCommunsApiClient
 from .models import LesCommunsProjet
+from .schemas import Service
 
 
 @shared_task
@@ -22,7 +23,7 @@ def load_lescommuns_services(project_id: int) -> bool:
         project_id=project.lescommuns_id
     )
     if len(services):
-        project.services = services
+        project.services = [Service(**service).model_dump() for service in services]
         project.save()
         return True
 

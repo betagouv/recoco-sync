@@ -21,6 +21,7 @@ class Porteur(BaseModel):
 
     class Config:
         alias_generator = to_camel
+        allow_population_by_field_name = True
 
 
 class Projet(BaseModel):
@@ -39,3 +40,22 @@ class Projet(BaseModel):
 
     class Config:
         alias_generator = to_camel
+        allow_population_by_field_name = True
+
+
+class Service(BaseModel):
+    id: int
+    name: str
+    description: str | None = None
+    sous_titre: str | None = None
+    redirection_url: str | None = None
+    logo_url: str | None = None
+    extra_fields: list[dict[str, str]] = []
+    is_listed: bool = True
+    redirection_label: str | None = None
+    iframe_url: str | None = None
+    extend_label: str | None = None
+
+    class Config:
+        alias_generator = to_camel
+        allow_population_by_field_name = True
