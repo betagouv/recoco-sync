@@ -4,7 +4,10 @@ from unittest.mock import patch
 
 import pytest
 
-from recoco_sync.lescommuns_connector.tasks import load_lescommuns_services
+from recoco_sync.lescommuns_connector.tasks import (
+    load_lescommuns_services,
+    update_or_create_resource_addons,
+)
 
 from .factories import LesCommunsProjetFactory
 
@@ -79,3 +82,20 @@ class TestLoadLescommunsServices:
         assert load_lescommuns_services(project_id=project.id) is False
         project.refresh_from_db()
         assert project.services == []
+
+
+@pytest.mark.django_db
+class TestUpdateOrCreateResourceAddons:
+    def test_project_not_found(self):
+        with pytest.raises(ValueError):
+            update_or_create_resource_addons(project_id=1)
+
+    def test_config_not_enabled(self):
+        project = LesCommunsProjetFactory(config__enabled=False)
+        with pytest.raises(ValueError):
+            update_or_create_resource_addons(project_id=project.id)
+
+    def test_webhook_config_not_enabled(self):
+        project = LesCommunsProjetFactory(config__webhook_config__enabled=False)
+        with pytest.raises(ValueError):
+            update_or_create_resource_addons(project_id=project.id)

@@ -63,7 +63,7 @@ class LesCommunsProjet(BaseModel):
 
     @property
     def is_service_ready(self) -> bool:
-        return self.recommendation_id is not None and len(self.services)
+        return self.recommendation_id is not None and len(self.services) > 0
 
 
 class LesCommunsProjectSelection(BaseModel):
