@@ -3,9 +3,11 @@ from __future__ import annotations
 from unittest.mock import Mock, patch
 
 import pytest
+from celery.exceptions import Retry
 
 from recoco_sync.lescommuns_connector.tasks import (
     load_lescommuns_services,
+    load_services_and_create_addons,
     update_or_create_resource_addons,
 )
 
@@ -146,3 +148,38 @@ class TestUpdateOrCreateResourceAddons:
                     "enabled": True,
                 },
             )
+
+
+@pytest.mark.parametrize(
+    "load_services_return,create_addons_return,retry_triggered",
+    [
+        (False, True, True),
+        (True, False, True),
+        (True, True, False),
+    ],
+)
+@pytest.mark.django_db
+def test_load_services_and_create_addons(
+    load_services_return, create_addons_return, retry_triggered
+):
+    with (
+        patch(
+            "recoco_sync.lescommuns_connector.tasks.load_lescommuns_services.s"
+        ) as mock_load_services,
+        patch(
+            "recoco_sync.lescommuns_connector.tasks.update_or_create_resource_addons.s"
+        ) as mock_created_addons,
+    ):
+        mock_load_services.return_value = Mock(return_value=load_services_return)
+        mock_created_addons.return_value = Mock(return_value=create_addons_return)
+
+        project = LesCommunsProjetFactory()
+
+        if retry_triggered:
+            with pytest.raises(Retry):
+                load_services_and_create_addons(project_id=project.id)
+            return
+
+        load_services_and_create_addons(project_id=project.id)
+        mock_load_services.assert_called_once_with(project.id)
+        mock_created_addons.assert_called_once_with(project.id)
