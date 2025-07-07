@@ -10,26 +10,27 @@ class Collectivite(BaseModel):
 
     class Config:
         alias_generator = to_camel
+        validate_by_alias = False
 
 
 class Porteur(BaseModel):
-    referent_email: str | None
-    referent_prenom: str | None
-    referent_nom: str | None
+    referent_email: str
+    referent_prenom: str | None = None
+    referent_nom: str | None = None
     code_siret: str | None = None
     referent_fonction: str | None = None
 
     class Config:
         alias_generator = to_camel
-        allow_population_by_field_name = True
+        validate_by_alias = False
 
 
 class Projet(BaseModel):
     nom: str | None
-    description: str | None
+    description: str | None = None
     porteur: Porteur | None = None
     budget_previsionnel: int | None = None
-    date_debut_previsionnelle: str
+    date_debut_previsionnelle: str | None = None
     phase: str
     phase_statut: str
     programme: str | None = None
@@ -40,7 +41,7 @@ class Projet(BaseModel):
 
     class Config:
         alias_generator = to_camel
-        allow_population_by_field_name = True
+        validate_by_alias = False
 
 
 class Service(BaseModel):

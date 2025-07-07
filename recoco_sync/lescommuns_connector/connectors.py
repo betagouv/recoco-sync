@@ -93,21 +93,21 @@ class LesCommunsConnector(Connector):
             porteur_data = switchtenders[0]
             porteur = Porteur(
                 code_siret=None,
-                referentFonction=None,
-                referentEmail=porteur_data.get("email"),
-                referentPrenom=porteur_data.get("firstname"),
-                referentNom=porteur_data.get("lastname"),
+                referent_fonction=None,
+                referent_email=porteur_data.get("email"),
+                referent_prenom=porteur_data.get("firstname"),
+                referent_nom=porteur_data.get("lastname"),
             )
 
         data = Projet(
             nom=payload.get("name"),
             description=payload.get("description"),
             collectivites=collectivites,
-            externalId=str(payload.get("id")),
+            external_id=str(payload.get("id")),
             phase=self.phase_mapping(payload.get("status")),
-            phaseStatut=self.phase_statut_mapping(payload.get("status")),
+            phase_statut=self.phase_statut_mapping(payload.get("status")),
             budget_previsionnel=None,
-            dateDebutPrevisionnelle=datetime.fromisoformat(payload.get("created_on")).strftime(
+            date_debut_previsionnelle=datetime.fromisoformat(payload.get("created_on")).strftime(
                 "%Y-%m-%d"
             ),
             porteur=porteur,
