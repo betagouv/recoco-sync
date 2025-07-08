@@ -11,7 +11,7 @@ La première étape est donc de cloner ce repository github.
 
 ### Prérequis
 
-On utilise [uv](https://docs.astral.sh/uv/) pour l'installation de python, ainsi que pour la gestion des dépendances.
+On utilise [uv](https://docs.astral.sh/uv/) pour l'installation de python, ainsi que pour la gestion des dépendances. Le hook precommit uv permet de re-générer le fichier requirements.txt nécessaireau déploiement.
 
 ### Environment virtuel python
 
@@ -35,7 +35,7 @@ docker-compose up -d
 Copier les [.env.template](.env.template) dans un fichier `.env` puis mettre à jour les variables d'environements.
 
 ```sh
-cp .env.template .env
+cp .env.sample .env
 ```
 
 ### Executer les migrations
@@ -44,17 +44,12 @@ cp .env.template .env
 make migrate
 ```
 
-### Créer un super utilisateur
-
-```sh
-make populate
-```
-
 ### Faire tourner les tests
 
 ```sh
 make test
 ```
+
 ### Lancer l'applciation
 
 ```sh
@@ -69,13 +64,5 @@ Pour installer les git hook de pre-commit, installer le package precommit et l'i
 ```sh
 pip install pre-commit
 pre-commit install
-```
-
-### Ajouter une dépendance
-
-Pour ajout une nouvelle dépendance, utiliser uv, puis regénérer le fichier `requirements.txt`
-
-```sh
-uv add <any_dep>
-make freeze-reqs
+make precommit
 ```
