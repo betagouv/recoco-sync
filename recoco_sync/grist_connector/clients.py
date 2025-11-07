@@ -101,3 +101,21 @@ class GristApiClient:
             json={"records": [{"id": k, "fields": v} for k, v in records.items()]},
         )
         return resp.json()
+
+    """
+    cf https://support.getgrist.com/api/#tag/records/operation/replaceRecords
+    create or update all records matching 'filter' dict
+    """
+
+    def update_or_create_records(
+        self, table_id: str, filters_fields: list[tuple[dict[str, Any], dict[str, Any]]]
+    ) -> dict[str, Any]:
+        resp = self._client.put(
+            f"docs/{self.doc_id}/tables/{table_id}/records?onmany=all",
+            json={
+                "records": [
+                    {"require": filter, "fields": fields} for filter, fields in filters_fields
+                ]
+            },
+        )
+        return resp.json()
