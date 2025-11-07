@@ -50,7 +50,7 @@ make migrate
 make test
 ```
 
-### Lancer l'applciation
+### Lancer l'application
 
 ```sh
 make runserver
