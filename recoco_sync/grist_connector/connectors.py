@@ -117,9 +117,8 @@ class GristConnector(Connector):
             col_label = f"{col_label[: settings.TABLE_COLUMN_HEADER_MAX_LENGTH - 3]}..."
         return col_label
 
-    def update_or_create_project_record(
-        self, config: GristConfig, project_id: int, project_data: dict
-    ):
+    @staticmethod
+    def update_or_create_project_record(config: GristConfig, project_id: int, project_data: dict):
         """
         Update a record related to a given project on Grist side,
         or create it if it doesn't exist.
@@ -127,21 +126,6 @@ class GristConnector(Connector):
 
         client = GristApiClient.from_config(config)
 
-        resp = client.get_records(
-            table_id=config.table_id,
-            filter={"object_id": [project_id]},
-        )
-
-        if len(records := resp["records"]):
-            client.update_records(
-                table_id=config.table_id,
-                records={
-                    records[0]["id"]: project_data,
-                },
-            )
-            return
-
-        client.create_records(
-            table_id=config.table_id,
-            records=[{"object_id": project_id} | project_data],
+        client.update_or_create_records(
+            table_id=config.table_id, filters_fields=[({"object_id": project_id}, project_data)]
         )
