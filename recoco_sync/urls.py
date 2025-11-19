@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from debug_toolbar.toolbar import debug_toolbar_urls
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
@@ -17,4 +16,6 @@ urlpatterns = [
 
 if settings.ENVIRONMENT == "dev":
     urlpatterns.append(path("__reload__/", include("django_browser_reload.urls")))
+    from debug_toolbar.toolbar import debug_toolbar_urls
+
     urlpatterns += debug_toolbar_urls()
