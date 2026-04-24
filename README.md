@@ -18,16 +18,12 @@ Voir la documentation dédiée [ARCHITECTURE.md](doc/ARCHITECTURE.md).
 
 ### Variables d'environnement
 
-```js
+```dotenv
 # Base de données
 DATABASE_URL=postgresql://user:pass@localhost/dbname
 
 # Redis (Celery)
 REDIS_URL=redis://localhost:6379/0
-
-# Grist
-GRIST_API_KEY=your_grist_api_key
-GRIST_BASE_URL=https://grist.numerique.gouv.fr
 
 # Les Communs
 LESCOMMUNS_API_KEY=your_lescommuns_api_key
