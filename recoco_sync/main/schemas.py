@@ -21,7 +21,7 @@ class Project(BaseModel):
     location: str | None
     latitude: float | None
     longitude: float | None
-    org_name: str | None = Field(alias="organization")
+    org_name: str | None = Field(validation_alias="orga_owner", alias="organization")
     inactive_since: str | None
     status: str
     commune_name: str | None = Field(
@@ -48,16 +48,17 @@ class Project(BaseModel):
         validation_alias=AliasPath("commune", "department", "region", "name"),
         alias="region",
         default=None,
-        exclude_unset=True,
     )
     commune_region_code: str | None = Field(
         validation_alias=AliasPath("commune", "department", "region", "code"),
         alias="region_code",
         default=None,
-        exclude_unset=True,
     )
     tags: list[str] = Field(default_factory=list)
     advisors_note: str | None
+    deleted: str | None
+    exclude_stats: bool
+    topics: list[str] = Field(default_factory=list)
 
     class Config:
         populate_by_name = True
@@ -65,6 +66,11 @@ class Project(BaseModel):
     @field_validator("tags", mode="after")
     @classmethod
     def compute_tags(cls, value: Any) -> str:
+        return ",".join(value)
+
+    @field_validator("topics", mode="after")
+    @classmethod
+    def compute_topics(cls, value: Any) -> str:
         return ",".join(value)
 
     @computed_field
