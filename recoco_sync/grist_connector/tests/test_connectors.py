@@ -42,6 +42,7 @@ class TestGristConnector:
             "topics": "Financement,Etudes",
             "deleted": "2024-10-10T09:50:32.182591+02:00",
             "exclude_stats": False,
+            "to_hide": True,
         }, data
 
     def test_map_from_survey_answer_payload_object(self, survey_answer_payload_object):

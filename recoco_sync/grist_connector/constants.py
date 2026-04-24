@@ -99,4 +99,8 @@ project_columns_spec = {
         "label": "Thématiques",
         "type": GristColumnType.CHOICE_LIST,
     },
+    "to_hide": {
+        "label": "À masquer",
+        "type": GristColumnType.BOOL,
+    },
 }

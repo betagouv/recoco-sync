@@ -77,3 +77,12 @@ class Project(BaseModel):
     @property
     def active(self) -> bool:
         return self.inactive_since is None
+
+    @computed_field
+    @property
+    def to_hide(self) -> bool:
+        return (
+            self.deleted is not None
+            or self.status in ["DRAFT", "PRE_DRAFT", "REJECTED"]
+            or self.exclude_stats
+        )
