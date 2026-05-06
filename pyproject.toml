@@ -41,9 +41,9 @@ dev-dependencies = [
     "pre-commit>=4.3.0",
     "pytest>=8.3.3",
     "pytest-django>=4.9.0",
-    "pytest-xdist>=3.6.1",
+    "pytest-xdist>=3.8.0",
     "respx>=0.22.0",
-    "ruff>=0.6.8",
+    "ruff>=0.14.2",
 ]
 
 [tool.pytest.ini_options]
