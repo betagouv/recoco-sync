@@ -82,11 +82,11 @@ class RecocoApiClient:
         )
 
     def get_projects(self) -> dict[str, Any]:
-        response = self._client.get("/projects/")
+        response = self._client.get("/projects/?with-deleted=true")
         return response.json()
 
     def get_project(self, project_id: int) -> dict[str, Any]:
-        response = self._client.get(f"/projects/{project_id}/")
+        response = self._client.get(f"/projects/{project_id}/?with-deleted=true")
         return response.json()
 
     def get_survey_sessions(self, project_id: int) -> dict[str, Any]:
