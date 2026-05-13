@@ -116,9 +116,9 @@ django-model-utils==5.0.0 \
     --hash=sha256:041cdd6230d2fbf6cd943e1969318bce762272077f4ecd333ab2263924b4e5eb \
     --hash=sha256:fec78e6c323d565a221f7c4edc703f4567d7bb1caeafe1acd16a80c5ff82056b
     # via recoco-sync
-django-ninja==1.4.3 \
-    --hash=sha256:e46d477ca60c228d2a5eb3cc912094928ea830d364501f966661eeada67cb038 \
-    --hash=sha256:f3204137a059437b95677049474220611f1cf9efedba9213556474b75168fa01
+django-ninja==1.6.2 \
+    --hash=sha256:20095f5900bada22ea00cf1a58af50bdb285b2354c61a9d9b47d0dc89ac462d6 \
+    --hash=sha256:d56ae5aa4791068ef4ac9a66cfdf2fc11f507413ded35abb79c51d0d52ad6412
     # via recoco-sync
 execnet==2.1.1 \
     --hash=sha256:26dee51f1b80cebd6d0ca8e74dd8745419761d3bef34163928cbebbdc4749fdc \
