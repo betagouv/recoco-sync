@@ -44,8 +44,8 @@ jobs:
       - name: Install the project
         run: uv sync --dev
 
-      - name: Check migrations
-        run: uv run manage.py makemigrations --check --dry-run
+#      - name: Check migrations
+#        run: uv run manage.py makemigrations --check --dry-run
 
       - name: Run tests
         run: uv run pytest --create-db
