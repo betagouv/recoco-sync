@@ -87,4 +87,20 @@ project_columns_spec = {
         "label": "Note des conseillers",
         "type": GristColumnType.TEXT,
     },
+    "deleted": {
+        "label": "Date de suppression",
+        "type": GristColumnType.DATETIME,
+    },
+    "exclude_stats": {
+        "label": "À exclure des stats",
+        "type": GristColumnType.BOOL,
+    },
+    "topics": {
+        "label": "Thématiques",
+        "type": GristColumnType.CHOICE_LIST,
+    },
+    "to_hide": {
+        "label": "À masquer",
+        "type": GristColumnType.BOOL,
+    },
 }

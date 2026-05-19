@@ -25,13 +25,17 @@ class TestConnector:
             "latitude": 47.1202035218,
             "longitude": -1.34924956417,
             "tags": "tag1,tag2",
-            "organization": "Conseil des Jedi",
+            "topics": "Financement,Etudes",
+            "organization": "Organisation du demandeur",
             "created": "2023-10-10T09:50:32.182591+02:00",
             "modified": "2024-05-24T10:54:21.653995+02:00",
+            "deleted": "2024-10-10T09:50:32.182591+02:00",
+            "exclude_stats": False,
             "inactive_since": None,
             "active": True,
             "status": "IN_PROGRESS",
             "advisors_note": "Note conseiller",
+            "to_hide": True,
         }
 
     def test_map_survey_answer_payload_object(self, survey_answer_payload_object):

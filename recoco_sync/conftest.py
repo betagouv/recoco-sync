@@ -72,12 +72,12 @@ def project_payload_object():
         "recommendation_count": 0,
         "public_message_count": 0,
         "private_message_count": 0,
-        "topics": [
-            {"name": "Financement"},
-            {"name": "Etudes"},
-        ],
+        "topics": ["Financement", "Etudes"],
         "tags": ["tag1", "tag2"],
         "advisors_note": "Note conseiller",
+        "deleted": "2024-10-10T09:50:32.182591+02:00",
+        "orga_owner": "Organisation du demandeur",
+        "exclude_stats": False,
     }
 
 

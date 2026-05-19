@@ -38,6 +38,13 @@ def grist_table_columns():
                 },
             },
             {
+                "id": "topics",
+                "fields": {
+                    "type": "ChoiceList",
+                    "label": "Etiquettes",
+                },
+            },
+            {
                 "id": "advisors_note",
                 "fields": {
                     "type": "Text",
@@ -129,6 +136,13 @@ def grist_table_columns():
                 },
             },
             {
+                "id": "deleted",
+                "fields": {
+                    "label": "Créé le",
+                    "type": "DateTime:Europe/Amsterdam",
+                },
+            },
+            {
                 "id": "modified",
                 "fields": {
                     "label": "Modifié le",
@@ -144,6 +158,20 @@ def grist_table_columns():
             },
             {
                 "id": "active",
+                "fields": {
+                    "label": "Actif",
+                    "type": "Bool",
+                },
+            },
+            {
+                "id": "to_hide",
+                "fields": {
+                    "label": "Actif",
+                    "type": "Bool",
+                },
+            },
+            {
+                "id": "exclude_stats",
                 "fields": {
                     "label": "Actif",
                     "type": "Bool",

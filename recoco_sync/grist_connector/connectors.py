@@ -26,12 +26,21 @@ class GristConnector(Connector):
         if not object_type.is_project:
             return
 
+        project_ids = (
+            event.payload.get("object").get("projects", [])
+            if object_type == ObjectType.USER
+            else [object_id]
+        )
+
         for config in GristConfig.objects.filter(
             enabled=True, webhook_config_id=event.webhook_config.pk
         ):
-            for _, project_data in self.fetch_projects_data(project_ids=[object_id], config=config):
+            # todo 2122 check if updating is about deleting and flag without fetching in that case
+            for project_id, project_data in self.fetch_projects_data(
+                project_ids=project_ids, config=config
+            ):
                 self.update_or_create_project_record(
-                    config=config, project_id=object_id, project_data=project_data
+                    config=config, project_id=project_id, project_data=project_data
                 )
 
     def get_recoco_api_client(self, **kwargs):
@@ -129,3 +138,5 @@ class GristConnector(Connector):
         client.update_or_create_records(
             table_id=config.table_id, filters_fields=[({"object_id": project_id}, project_data)]
         )
+
+    # todo 2122 flag_deleted

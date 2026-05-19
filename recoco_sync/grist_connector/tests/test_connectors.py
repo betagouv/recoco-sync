@@ -32,13 +32,17 @@ class TestGristConnector:
             "latitude": 47.1202035218,
             "longitude": -1.34924956417,
             "tags": "tag1,tag2",
-            "organization": "Conseil des Jedi",
+            "organization": "Organisation du demandeur",
             "created": "2023-10-10T09:50:32.182591+02:00",
             "modified": "2024-05-24T10:54:21.653995+02:00",
             "inactive_since": None,
             "active": True,
             "status": "IN_PROGRESS",
             "advisors_note": "Note conseiller",
+            "topics": "Financement,Etudes",
+            "deleted": "2024-10-10T09:50:32.182591+02:00",
+            "exclude_stats": False,
+            "to_hide": True,
         }, data
 
     def test_map_from_survey_answer_payload_object(self, survey_answer_payload_object):
