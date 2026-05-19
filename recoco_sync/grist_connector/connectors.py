@@ -35,6 +35,7 @@ class GristConnector(Connector):
         for config in GristConfig.objects.filter(
             enabled=True, webhook_config_id=event.webhook_config.pk
         ):
+            # todo 2122 check if updating is about deleting and flag without fetching in that case
             for project_id, project_data in self.fetch_projects_data(
                 project_ids=project_ids, config=config
             ):
@@ -137,3 +138,5 @@ class GristConnector(Connector):
         client.update_or_create_records(
             table_id=config.table_id, filters_fields=[({"object_id": project_id}, project_data)]
         )
+
+    # todo 2122 flag_deleted
