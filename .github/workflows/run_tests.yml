@@ -16,13 +16,13 @@ jobs:
 
     services:
       postgres:
-        image: postgres
+        image: postgres:16
         ports:
           - 5435:5432
         env:
           POSTGRES_USER: postgres
-          POSTGRES_NAME: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: recocosync-testing
           POSTGRES_PORT: 5432
         options: >-
           --health-cmd pg_isready
