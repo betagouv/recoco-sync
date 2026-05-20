@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import sentry_sdk
 from django.conf import settings
 from httpx import Auth, Client, Request, Response
 
@@ -82,8 +83,16 @@ class RecocoApiClient:
         )
 
     def get_projects(self) -> dict[str, Any]:
-        response = self._client.get("/projects/?with-deleted=true")
-        return response.json()["results"]
+        # fixme handle pagination. 1000 is the max but we will gave problems
+        #  if we reach it on one site at some point
+        response = self._client.get("/projects/?with-deleted=true&limit=1000")
+        res = response.json()
+        if res["count"] > 995:
+            sentry_sdk.capture_message(
+                "1000 projects almost reached."
+                "Please actually manage pagination on calling project list api"
+            )
+        return res["results"]
 
     def get_project(self, project_id: int) -> dict[str, Any]:
         response = self._client.get(f"/projects/{project_id}/?with-deleted=true")
