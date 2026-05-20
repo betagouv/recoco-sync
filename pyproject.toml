@@ -1,6 +1,6 @@
 [project]
 name = "recoco-sync"
-version = "0.1.0"
+version = "0.1.1"
 description = "Recoco-sync est une application qui permet la synchronisation des portails de Recommandations Collaboratives avec des applications tierces."
 authors = [{ name = "Recoco Dev Team" }]
 maintainers = [
