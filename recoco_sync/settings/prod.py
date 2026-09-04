@@ -26,5 +26,4 @@ if SENTRY_URL := env.str("SENTRY_URL", default=None):
         ],
         environment=ENVIRONMENT,
         traces_sample_rate=0.05,
-        send_default_pii=True,
     )
