@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+from datetime import datetime, timedelta
 from typing import Any
 
 from django.conf import settings
@@ -15,6 +16,11 @@ class SecurityAuth(APIKeyHeader):
 
     def authenticate(self, request: HttpRequest, key: str | None) -> Any | None:
         timestamp = request.headers.get("Django-Webhook-Request-Timestamp")
+        now = datetime.now()
+        if not timedelta or abs(now - datetime.fromtimestamp(int(timestamp))) > timedelta(
+            minutes=5
+        ):
+            raise HttpError(401, "timedelta out of range")
 
         for signature in key.split(","):
             digest_payload = bytes(timestamp, "utf8") + b":" + request.body
