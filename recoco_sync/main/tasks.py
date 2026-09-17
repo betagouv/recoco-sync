@@ -28,5 +28,6 @@ def process_webhook_event(event_id: int):
     for connector in get_connectors():
         connector.on_webhook_event(object_id=object_id, object_type=object_type, event=event)
 
+    event.payload = ""
     event.status = WebhookEventStatus.PROCESSED
     event.save()
