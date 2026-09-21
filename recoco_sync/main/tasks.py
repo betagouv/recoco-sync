@@ -21,8 +21,14 @@ def process_webhook_event(event_id: int):
     object_id: int | None = int(event.object_id)
     object_type: ObjectType | None = ObjectType(event.object_type)
 
+    # these tests are weird because the data sent by core are not really fit for this use.
+    # this should be simplified
     if event.object_type in (ObjectType.SURVEY_ANSWER, ObjectType.TAGGEDITEM):
-        object_id = int(event.object_data.get("project"))
+        object_id = int(
+            event.object_data.get(
+                "project" if event.object_type == ObjectType.SURVEY_ANSWER else "id", object_id
+            )
+        )
         object_type = ObjectType.PROJECT
 
     for connector in get_connectors():

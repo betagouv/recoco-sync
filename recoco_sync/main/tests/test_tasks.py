@@ -16,6 +16,14 @@ from .factories import WebhookEventFactory
     [
         (999, ObjectType.PROJECT, {"project": 999}, 999, ObjectType.PROJECT),
         (888, ObjectType.SURVEY_ANSWER, {"project": 999}, 999, ObjectType.PROJECT),
+        (777, ObjectType.TAGGEDITEM, {"id": 999}, 999, ObjectType.PROJECT),
+        (
+            666,
+            ObjectType.USER,
+            {"id": 666, "projects": [999, 694, 1029, 1123]},
+            666,
+            ObjectType.USER,
+        ),
         # (ObjectType.RECOMMENDATION, 666, {}),
     ],
 )
