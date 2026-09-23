@@ -47,7 +47,7 @@ def test_task_triggered_and_event_saved(
 
     event.refresh_from_db()
     assert event.status == WebhookEventStatus.PROCESSED
-    assert event.payload == ""
+    assert event.payload == {}
 
 
 @pytest.mark.django_db

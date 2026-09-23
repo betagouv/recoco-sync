@@ -53,6 +53,6 @@ def process_webhook_event(event_id: int):
             )
         )
     else:
-        event.payload = ""
+        event.payload = {}
         event.status = WebhookEventStatus.PROCESSED
     event.save()
