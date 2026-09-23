@@ -19,17 +19,26 @@ Voir la documentation dédiée [ARCHITECTURE.md](doc/ARCHITECTURE.md).
 ### Variables d'environnement
 
 ```dotenv
+DJANGO_SETTINGS_MODULE=recoco_sync.settings.prod
+SECRET_KEY=
+WEBHOOK_SECRET=
 # Base de données
+ALLOWED_HOSTS=recocosync.alwaysdata.net,sync.recoconseil.fr
 DATABASE_URL=postgresql://user:pass@localhost/dbname
 
 # Redis (Celery)
-REDIS_URL=redis://localhost:6379/0
+BROKER_URL=redis://localhost:6379/0
 
 # Les Communs
 LESCOMMUNS_API_KEY=your_lescommuns_api_key
 LESCOMMUNS_BASE_URL=https://api.lescommuns.org
 LESCOMMUNS_RESOURCE_TAG_NAME=les-communs
 LESCOMMUNS_PROJECT_SELECTION_ENABLED=true
+
+# Core
+RECOCO_API_USERNAME=recocosync
+RECOCO_API_PASSWORD=
+
 ```
 
 ### Configuration des connecteurs
@@ -39,6 +48,12 @@ Chaque connecteur peut être configuré via l'interface d'administration Django 
 - Webhook Config: Configuration du webhook source
 - Connector Config: Paramètres spécifiques au connecteur
 - Mapping Rules: Règles de transformation des données
+
+### Paramétrage cœur
+Dans l'application cœur, il fut que l'utilisateur pointé par `RECOCO_API_USERNAME` ait les permission suivantes pour tous les sites :
+- sites.list_projects
+- sites.moderate_projects
+- sites.see_deleted_projects
 
 ## Traitements
 
