@@ -16,4 +16,4 @@ class Command(BaseCommand):
         events = WebhookEvent.objects.filter(
             Q(created__lt=timezone.now() - timedelta(days=30)) | Q(status__iexact="PROCESSED")
         )
-        events.update(payload="")
+        events.update(payload={})
