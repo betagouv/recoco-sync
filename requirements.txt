@@ -23,10 +23,12 @@ asttokens==3.0.2 \
     --hash=sha256:3ecdbd8f2cc195f53ccada3a613538bb5f9ef6f6869129f13e03c30a677b8fe2 \
     --hash=sha256:9da13157f5b28becde0bd374fc677dcd3c290614264eff096f167c469cd9f933
     # via stack-data
-billiard==4.2.1 \
-    --hash=sha256:12b641b0c539073fc8d3f5b8b7be998956665c4233c7c1fcd66a7e677c4fb36f \
-    --hash=sha256:40b59a4ac8806ba2c2369ea98d876bc6108b051c227baffd928c644d15d8f3cb
-    # via celery
+billiard==4.3.1 \
+    --hash=sha256:2c7075283191d9c0add66cf8fca8e06ba599e75fe7319b67186759f8877dfdaf \
+    --hash=sha256:c88559b306ee5dc93f8d5f843d07da15d795d67af26720d14ee9d09f09eb0b22
+    # via
+    #   celery
+    #   recoco-sync
 celery==5.6.3 \
     --hash=sha256:0808f42f80909c4d5833202360ffafb2a4f83f4d8e23e1285d926610e9a7afa6 \
     --hash=sha256:177006bd2054b882e9f01be59abd8529e88879ef50d7918a7050c5a9f4e12912
@@ -72,13 +74,13 @@ colorama==0.4.6 ; sys_platform == 'win32' \
     #   click
     #   ipython
     #   pytest
-distlib==0.4.0 \
-    --hash=sha256:9659f7d87e46584a30b5780e43ac7a2143098441670ff0a49d5f9034c54a6c16 \
-    --hash=sha256:feec40075be03a04501a973d81f633735b4b69f98b05450592310c0f401a4e0d
+distlib==0.4.3 \
+    --hash=sha256:4b0ce306c966eb73bc3a7b6abad017c556dadd92c44701562cd528ac7fde4d5b \
+    --hash=sha256:f152097224a0ae24be5a0f6bae1b9359af82133bce63f98a95f86cae1aede9ed
     # via virtualenv
-django==6.1 \
-    --hash=sha256:6c132cd980c9392b06807d4ca52d72530d631dc65a85d9dacede00a780cefbbe \
-    --hash=sha256:86a2aacd59b817e4d6ac2ebfe22356c58f66f7b24e503f71b7c2fead677ee48b
+django==6.1.2 \
+    --hash=sha256:141efee6ec64d1db6db90683bf734c550102450f444fb099063b0be1bd27d991 \
+    --hash=sha256:a1e92451ccb8b514e91bbb3b6d186d20b4030558f116b5d9de6535455ff210b7
     # via
     #   django-browser-reload
     #   django-celery-results
@@ -88,9 +90,9 @@ django==6.1 \
     #   django-ninja
     #   recoco-sync
     #   sentry-sdk
-django-browser-reload==1.18.0 \
-    --hash=sha256:c5f0b134723cbf2a0dc9ae1ee1d38e42db28fe23c74cdee613ba3ef286d04735 \
-    --hash=sha256:ed4cc2fb83c3bf6c30b54107a1a6736c0b896e62e4eba666d81005b9f2ecf6f8
+django-browser-reload==1.21.0 \
+    --hash=sha256:0b2a86ab460774fa9bb142a121c70e75a72f18109f51a4f6de409cd633d3a70d \
+    --hash=sha256:3335ad3d107eb657f623d1a8e680dfbcab8a83ae1f94df1895e069dddf5604ba
     # via recoco-sync
 django-celery-results==2.6.0 \
     --hash=sha256:9abcd836ae6b61063779244d8887a88fe80bbfaba143df36d3cb07034671277c \
@@ -194,6 +196,7 @@ packaging==26.3 \
     # via
     #   kombu
     #   pytest
+    #   virtualenv
 parso==0.8.4 \
     --hash=sha256:a418670a20291dacd2dddc80c377c5c3791378ee1e8d12bffc35420643d43f18 \
     --hash=sha256:eb3a7b58240fb99099a345571deecc0f9540ea5f4dd2fe14c2a99d6b281ab92d
@@ -210,9 +213,9 @@ pluggy==1.6.0 \
     --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
     --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
     # via pytest
-pre-commit==4.3.0 \
-    --hash=sha256:2b0747ad7e6e967169136edffee14c16e148a778a54e4f967921aa1ebf2308d8 \
-    --hash=sha256:499fe450cc9d42e9d58e606262795ecb64dd05438943c62b66f6a8673da30b16
+pre-commit==4.6.2 \
+    --hash=sha256:8f5d7bfb021ecdbcd9d49d89847082dd24172ccde534390081a679ad046e2441 \
+    --hash=sha256:e2dde9a75d3bce11bd3831c26d134df00a2803c1d818be6a0383c3dcda25dc4e
 prompt-toolkit==3.0.53 \
     --hash=sha256:01c0891d7f9237d5e339f7d3e42cdae80b7534abb1c7c0e3352efba6231492f2 \
     --hash=sha256:9ec8a0ad96d5c56148b3f914aa79c1564c3fde5d2e6b876e7bc327e353cf8fa6
@@ -352,9 +355,9 @@ pytest==9.1.1 \
     # via
     #   pytest-django
     #   pytest-xdist
-pytest-django==4.11.1 \
-    --hash=sha256:1b63773f648aa3d8541000c26929c1ea63934be1cfa674c76436966d73fe6a10 \
-    --hash=sha256:a949141a1ee103cb0e7a20f1451d355f83f5e4a5d07bdd4dcfdd1fd0ff227991
+pytest-django==4.14.0 \
+    --hash=sha256:26787dd3f422cfbab8f55b80a776e2edea7a11092cb74e960bef1312515708ef \
+    --hash=sha256:c533b08d89cc675efcd5398eea270b34547e35f9a3608e2c9748dd88428ea187
 pytest-xdist==3.8.0 \
     --hash=sha256:202ca578cfeb7370784a8c33d6d05bc6e13b4f25b5053c30a152269fd10f0b88 \
     --hash=sha256:7e578125ec9bc6050861aa93f2d59f1d8d085595d6551c2c90b6f4fad8d3a9f1
@@ -362,9 +365,9 @@ python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
     --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
     # via celery
-python-discovery==1.6.0 \
-    --hash=sha256:6393b4eae1be8b2182670635e7baff89ac21cb9f8e86fd1ff40c7b1144febb4c \
-    --hash=sha256:d4e244cf17b8b29819ed78003d55fbacf86eda23425b075454fff9271b79377a
+python-discovery==1.6.1 \
+    --hash=sha256:cf87d3627dfb4412437fdd5b13eae402607722998d21567993aedbc59b23c15e \
+    --hash=sha256:d43fcdef879fe795352bd13ccf8d185ba5a9f86f36cfcd00529f596e737442b3
     # via virtualenv
 pyyaml==6.0.3 \
     --hash=sha256:00c4bdeba853cc34e7dd471f16b4114f4162dc03e6b7afcc2128711f0eca823c \
@@ -493,9 +496,9 @@ vine==5.1.0 \
     #   amqp
     #   celery
     #   kombu
-virtualenv==21.7.8 \
-    --hash=sha256:1dc49c790072a9072cb1803f9bd62aa69cd583077cada32390f75505cdc64c9b \
-    --hash=sha256:3040eb3cbf5d32b10ffd57d167e6a162237ad82ba7d8cf1400a1efed593d85ac
+virtualenv==21.14.6 \
+    --hash=sha256:c6b74616e64bffa9532cfa9dfd54ffbab0dc9b999df2bb8ec0d75e559b983661 \
+    --hash=sha256:eb1a20c5878569b69667f6a1af03458a8512b3afa7be771a2dafe92fdca05bb9
     # via pre-commit
 wcwidth==0.8.3 \
     --hash=sha256:d128512515fbf4612e0ff21fd6380399210318b7b54a9af59dff8454cf9730eb \
