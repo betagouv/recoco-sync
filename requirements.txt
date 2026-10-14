@@ -153,9 +153,9 @@ httpx==0.28.1 \
     # via
     #   recoco-sync
     #   respx
-identify==2.6.13 \
-    --hash=sha256:60381139b3ae39447482ecc406944190f690d4a2997f2584062089848361b33b \
-    --hash=sha256:da8d6c828e773620e13bfa86ea601c5a5310ba4bcd65edf378198b56a1f9fb32
+identify==2.6.20 \
+    --hash=sha256:6a16b69b93187244e0548cbfd25b3e4a6f9a7a2ad784625c3bec2b8d27b81aaa \
+    --hash=sha256:ad729860a923858d26917c2f4fb0a1d83d27a75b1e090c06440c573f048f3285
     # via pre-commit
 idna==3.19 \
     --hash=sha256:5e0811a4383b21dc5838069f801c4fb62113b7447663d2530d2bd6e77b49bf15 \
