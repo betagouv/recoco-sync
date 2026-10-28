@@ -278,9 +278,9 @@ pure-eval==0.2.4 \
     --hash=sha256:260c2774686e651b79f8b8e7fc9d80b3599ea6a66334b47d5f4abb69fc2c0ea1 \
     --hash=sha256:96cae060a313cfaad51bb761278bfb0e62dc0248d9315a81173752dc546cd37a
     # via stack-data
-pydantic==2.12.3 \
-    --hash=sha256:1da1c82b0fc140bb0103bc1441ffe062154c8d38491189751ee00fd8ca65ce74 \
-    --hash=sha256:6986454a854bc3bc6e5443e1369e06a3a456af9d339eda45510f517d9ea5c6bf
+pydantic==2.14.1 \
+    --hash=sha256:9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454 \
+    --hash=sha256:94f478203dd03404682a1ada216965651dd74b1d2d5ffd62e00e0837caab5c26
     # via django-ninja
 pydantic-core==2.41.4 \
     --hash=sha256:025ba34a4cf4fb32f917d5d188ab5e702223d3ba603be4d8aca2f82bede432a4 \
